@@ -10,13 +10,11 @@ class Character extends MoveableObject {
     "img/2_character_pepe/2_walk/W-26.png",
   ];
   world;
-  speed = 2;
+  speed = 5;
 
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
     this.loadImages(this.IMAGES_WALKING);
-
-    this.animate();
   }
 
   animate() {
