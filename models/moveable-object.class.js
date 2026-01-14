@@ -11,9 +11,27 @@ class MoveableObject {
   speedY = 0;
   acceleration = 2.5;
 
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+
+  drawFrame(ctx) {
+    if (this instanceof Character || this instanceof Chicken) {
+      ctx.beginPath();
+      ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.stroke();
+      ctx.lineWidth = "5";
+      ctx.strokeStyle = "red";
+    }
+  }
+
+  jump() {
+    this.speedY = 30;
+  }
+
   applyGravity() {
     setInterval(() => {
-      if (this.isAboveGround()) {
+      if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
       }
@@ -38,13 +56,11 @@ class MoveableObject {
   }
 
   moveRight() {
-    console.log("Moving right");
+    this.x += this.speed;
   }
 
   moveLeft() {
-    setInterval(() => {
-      this.x -= this.speed;
-    }, 1000 / 60);
+    this.x -= this.speed;
   }
 
   playAnimation(images) {
@@ -52,5 +68,14 @@ class MoveableObject {
     let path = images[i];
     this.img = this.imgageCache[path];
     this.currentImage++;
+  }
+
+  isColliding(mo) {
+    return (
+      this.x + this.width > mo.x &&
+      this.x < mo.x + mo.width &&
+      this.y + this.height > mo.y &&
+      this.y < mo.y + mo.height
+    );
   }
 }
