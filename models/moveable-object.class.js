@@ -10,6 +10,7 @@ class MoveableObject {
   otherDirection = false;
   speedY = 0;
   acceleration = 2.5;
+  energy = 100;
 
   draw(ctx) {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
