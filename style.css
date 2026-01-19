@@ -1,9 +1,348 @@
+/* ==================== Global Styles ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: "Boogaloo", cursive;
+  background-color: #1a1a2e;
+}
+
+/* ==================== Landing Page ==================== */
+.landing-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("img/9_intro_outro_screens/start/startscreen_1.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.landing-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  z-index: -1;
+}
+
+.landing-content {
+  text-align: center;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 165, 0, 0.3);
+  box-shadow: 0 0 40px rgba(255, 165, 0, 0.2);
+}
+
+.game-title {
+  font-size: 4rem;
+  color: #ff6b35;
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px 1px 0 #000, 0 0 20px rgba(255, 107, 53, 0.5);
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.game-subtitle {
+  font-size: 1.5rem;
+  color: #ffd700;
+  margin-bottom: 40px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* ==================== Buttons ==================== */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.btn {
+  font-family: "Boogaloo", cursive;
+  font-size: 1.3rem;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 250px;
+  justify-content: center;
+}
+
+.btn span {
+  font-size: 1.4rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931a 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+  color: #ffd700;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #3d4446 0%, #737e82 100%);
+}
+
+.btn-small {
+  font-size: 1rem;
+  padding: 8px 15px;
+  min-width: auto;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-small:hover {
+  background: rgba(255, 107, 53, 0.8);
+}
+
+/* ==================== Dialog / Modal ==================== */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  backdrop-filter: blur(5px);
+}
+
+.dialog-overlay.active {
+  display: flex;
+}
+
+.dialog {
+  background: linear-gradient(145deg, #2d3436 0%, #1a1a2e 100%);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  border: 2px solid rgba(255, 165, 0, 0.3);
+  box-shadow: 0 0 50px rgba(255, 107, 53, 0.3);
+  animation: dialogSlideIn 0.3s ease;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dialog-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 107, 53, 0.2);
+  border: none;
+  color: #ff6b35;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dialog-close:hover {
+  background: #ff6b35;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.dialog h2 {
+  color: #ff6b35;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+.dialog-content h3 {
+  color: #ffd700;
+  margin: 20px 0 10px 0;
+  font-size: 1.3rem;
+}
+
+.dialog-content p {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.dialog-content ul {
+  list-style: none;
+  padding-left: 10px;
+}
+
+.dialog-content li {
+  margin-bottom: 10px;
+  padding-left: 25px;
+  position: relative;
+  font-size: 1.1rem;
+}
+
+.dialog-content li::before {
+  content: "🌶️";
+  position: absolute;
+  left: 0;
+}
+
+/* ==================== Keybindings Table ==================== */
+.keybindings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.keybindings-table tr {
+  border-bottom: 1px solid rgba(255, 165, 0, 0.2);
+}
+
+.keybindings-table td {
+  padding: 15px 10px;
+  font-size: 1.1rem;
+}
+
+.keybindings-table td:first-child {
+  text-align: center;
+  width: 100px;
+}
+
+kbd {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931a 100%);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-family: "Boogaloo", cursive;
+  font-size: 1rem;
+  box-shadow: 0 3px 0 #b34700, 0 5px 10px rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  min-width: 50px;
+}
+
+/* ==================== Game Container ==================== */
+.game-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-container.hidden {
+  display: none;
+}
+
+.game-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 canvas {
   background-color: black;
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== Utility Classes ==================== */
+.hidden {
+  display: none !important;
+}
+
+/* ==================== Fullscreen Adjustments ==================== */
+:fullscreen .landing-page,
+:-webkit-full-screen .landing-page {
+  border-radius: 0;
+}
+
+:fullscreen canvas,
+:-webkit-full-screen canvas {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 600px) {
+  .game-title {
+    font-size: 2.5rem;
+  }
+
+  .game-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    min-width: 220px;
+  }
+
+  .dialog {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .dialog h2 {
+    font-size: 1.5rem;
+  }
 }

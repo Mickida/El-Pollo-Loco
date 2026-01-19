@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Boogaloo&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <script src="models/drawable-object.class.js"></script>
     <script src="models/moveable-object.class.js"></script>
@@ -17,14 +23,13 @@
     <script src="models/background-object.class.js"></script>
     <script src="models/keyboard.class.js"></script>
     <script src="levels/level1.js"></script>
-
-    <script src="js/game.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/ui.js"></script>
 
     <title>El Pollo Loco</title>
   </head>
-  <body onload="init()">
-    <h1>El pollo loco</h1>
-
-    <canvas id="canvas" width="720" height="480"> </canvas>
+  <body>
+    <div id="ui-root"></div>
+    <script src="js/game.js"></script>
   </body>
 </html>
