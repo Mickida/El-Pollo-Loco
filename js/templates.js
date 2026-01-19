@@ -69,8 +69,21 @@ const Templates = {
     <div id="game-container" class="game-container hidden">
       <canvas id="canvas" width="720" height="480"></canvas>
       <div class="game-controls">
+        <button id="mute-btn" class="btn btn-small" onclick="AudioManager.toggleMute()" title="Mute">🔊</button>
         <button class="btn btn-small" onclick="toggleFullscreen()">⛶</button>
         <button class="btn btn-small" onclick="backToMenu()">☰</button>
+      </div>
+    </div>
+  `,
+
+  endscreen: `
+    <div id="endscreen" class="endscreen-overlay hidden">
+      <div class="endscreen-content">
+        <img id="endscreen-image" src="" alt="Game Over" class="endscreen-image">
+        <div class="endscreen-buttons">
+          <button class="btn btn-primary" onclick="restartGame()"><span>🔄</span> Restart</button>
+          <button class="btn btn-secondary" onclick="backToMenu()"><span>🏠</span> Home</button>
+        </div>
       </div>
     </div>
   `,

@@ -8,6 +8,12 @@ class World {
   statusBar = new StatusBar();
   throwableObjects = [];
 
+  // Game state
+  inGrace = false; // Grace period - no damage taken
+  gameOver = false;
+  gameIntervals = []; // Store intervals for cleanup
+  animationFrameId = null;
+
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -18,10 +24,49 @@ class World {
   }
 
   run() {
-    setInterval(() => {
-      this.checkCollisions();
-      this.checkThrowObjects();
+    // Store interval references for cleanup
+    let collisionInterval = setInterval(() => {
+      if (!this.gameOver) {
+        this.checkCollisions();
+        this.checkThrowObjects();
+        this.checkGameOver();
+      }
     }, 200);
+    this.gameIntervals.push(collisionInterval);
+  }
+
+  /**
+   * Check if game should end
+   */
+  checkGameOver() {
+    if (this.character.isDead() && !this.gameOver) {
+      this.gameOver = true;
+      // Trigger game over after death animation
+      setTimeout(() => {
+        if (window.endGame) {
+          window.endGame("gameover");
+        }
+      }, 500);
+    }
+  }
+
+  /**
+   * Stop all game loops and intervals
+   */
+  stopGame() {
+    this.gameOver = true;
+
+    // Clear all intervals
+    this.gameIntervals.forEach((interval) => {
+      clearInterval(interval);
+    });
+    this.gameIntervals = [];
+
+    // Cancel animation frame
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
   }
 
   checkThrowObjects() {
@@ -35,15 +80,25 @@ class World {
   }
 
   checkCollisions() {
+    // Skip collision damage during grace period
+    if (this.inGrace) return;
+
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
+
+        // Play hurt sound
+        if (window.AudioManager) {
+          window.AudioManager.playSfx("hurt");
+        }
       }
     });
   }
 
   draw() {
+    if (this.gameOver) return;
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.ctx.translate(this.camera_x, 0);
@@ -61,7 +116,7 @@ class World {
     this.ctx.translate(-this.camera_x, 0);
 
     let self = this;
-    requestAnimationFrame(function () {
+    this.animationFrameId = requestAnimationFrame(function () {
       self.draw();
     });
   }

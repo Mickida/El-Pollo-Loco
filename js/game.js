@@ -2,6 +2,10 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 let gameStarted = false;
+let gameEnded = false;
+
+// Grace period duration in milliseconds (player is invulnerable at start)
+const GRACE_PERIOD_MS = 3000;
 
 /**
  * Initializes the game when called (after clicking Start)
@@ -9,7 +13,17 @@ let gameStarted = false;
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard);
-  console.log("My character is", world);
+
+  // Enable grace period at start
+  world.inGrace = true;
+  setTimeout(() => {
+    if (world) {
+      world.inGrace = false;
+      console.log("Grace period ended - good luck!");
+    }
+  }, GRACE_PERIOD_MS);
+
+  console.log("Game initialized with", GRACE_PERIOD_MS + "ms grace period");
 }
 
 /**
@@ -18,17 +32,154 @@ function init() {
 function startGame() {
   if (gameStarted) return;
   gameStarted = true;
+  gameEnded = false;
 
   document.getElementById("landing-page").classList.add("hidden");
   document.getElementById("game-container").classList.remove("hidden");
 
+  // Hide endscreen if visible
+  if (window.UI && window.UI.hideEndscreen) {
+    window.UI.hideEndscreen();
+  }
+
+  // Initialize and start audio
+  if (window.AudioManager) {
+    window.AudioManager.init();
+    window.AudioManager.updateMuteButton();
+    window.AudioManager.playMusic();
+  }
+
   init();
+}
+
+/**
+ * Restarts the game after game over or win
+ */
+function restartGame() {
+  // Stop current game
+  if (world) {
+    world.stopGame();
+  }
+
+  // Reset state
+  gameStarted = false;
+  gameEnded = false;
+  world = null;
+  keyboard = new Keyboard();
+
+  // Reset level (recreate enemies)
+  resetLevel();
+
+  // Hide endscreen
+  if (window.UI && window.UI.hideEndscreen) {
+    window.UI.hideEndscreen();
+  }
+
+  // Start fresh
+  startGame();
+}
+
+/**
+ * Reset level to initial state (recreate enemies, etc.)
+ */
+function resetLevel() {
+  // Recreate level1 with fresh enemies
+  window.level1 = new Level(
+    [new Chicken(), new Chicken(), new Chicken(), new Endboss()],
+    [new Cloud()],
+    createBackgroundObjects()
+  );
+}
+
+/**
+ * Create background objects for the level
+ */
+function createBackgroundObjects() {
+  return [
+    new BackgroundObject("img/5_background/layers/air.png", -720),
+    new BackgroundObject("img/5_background/layers/3_third_layer/2.png", -720),
+    new BackgroundObject("img/5_background/layers/2_second_layer/2.png", -720),
+    new BackgroundObject("img/5_background/layers/1_first_layer/2.png", -720),
+
+    new BackgroundObject("img/5_background/layers/air.png", 0),
+    new BackgroundObject("img/5_background/layers/3_third_layer/1.png", 0),
+    new BackgroundObject("img/5_background/layers/2_second_layer/1.png", 0),
+    new BackgroundObject("img/5_background/layers/1_first_layer/1.png", 0),
+
+    new BackgroundObject("img/5_background/layers/air.png", 720),
+    new BackgroundObject("img/5_background/layers/3_third_layer/2.png", 720),
+    new BackgroundObject("img/5_background/layers/2_second_layer/2.png", 720),
+    new BackgroundObject("img/5_background/layers/1_first_layer/2.png", 720),
+
+    new BackgroundObject("img/5_background/layers/air.png", 720 * 2),
+    new BackgroundObject(
+      "img/5_background/layers/3_third_layer/1.png",
+      720 * 2
+    ),
+    new BackgroundObject(
+      "img/5_background/layers/2_second_layer/1.png",
+      720 * 2
+    ),
+    new BackgroundObject(
+      "img/5_background/layers/1_first_layer/1.png",
+      720 * 2
+    ),
+
+    new BackgroundObject("img/5_background/layers/air.png", 720 * 3),
+    new BackgroundObject(
+      "img/5_background/layers/3_third_layer/2.png",
+      720 * 3
+    ),
+    new BackgroundObject(
+      "img/5_background/layers/2_second_layer/2.png",
+      720 * 3
+    ),
+    new BackgroundObject(
+      "img/5_background/layers/1_first_layer/2.png",
+      720 * 3
+    ),
+  ];
+}
+
+/**
+ * Called when game ends (win or lose)
+ * @param {string} type - 'gameover' or 'win'
+ */
+function endGame(type) {
+  if (gameEnded) return;
+  gameEnded = true;
+
+  // Stop game loops
+  if (world) {
+    world.stopGame();
+  }
+
+  // Play appropriate sound
+  if (window.AudioManager) {
+    window.AudioManager.stopMusic();
+    if (type === "win") {
+      window.AudioManager.playSfx("win");
+    } else {
+      window.AudioManager.playSfx("gameOver");
+    }
+  }
+
+  // Show endscreen after short delay for death animation
+  setTimeout(() => {
+    if (window.UI && window.UI.showEndscreen) {
+      window.UI.showEndscreen(type);
+    }
+  }, 500);
 }
 
 /**
  * Returns to the main menu (reloads the page)
  */
 function backToMenu() {
+  // Stop audio before reload
+  if (window.AudioManager) {
+    window.AudioManager.stopAll();
+  }
   location.reload();
 }
 
