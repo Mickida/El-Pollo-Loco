@@ -7,6 +7,13 @@ class DrawableObject {
   height = 150;
   width = 100;
 
+  // Hitbox offset for more accurate collision detection
+  // These values shrink the hitbox from each side
+  hitboxOffsetTop = 0;
+  hitboxOffsetBottom = 0;
+  hitboxOffsetLeft = 0;
+  hitboxOffsetRight = 0;
+
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
@@ -25,12 +32,22 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Chicken) {
-      ctx.beginPath();
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.stroke();
-      ctx.lineWidth = "5";
-      ctx.strokeStyle = "red";
-    }
+    // Debug hitbox drawing - comment out for production
+    // if (
+    //   this instanceof Character ||
+    //   this instanceof Chicken ||
+    //   this instanceof Endboss
+    // ) {
+    //   ctx.beginPath();
+    //   ctx.lineWidth = 2;
+    //   ctx.strokeStyle = "blue";
+    //   ctx.rect(
+    //     this.x + this.hitboxOffsetLeft,
+    //     this.y + this.hitboxOffsetTop,
+    //     this.width - this.hitboxOffsetLeft - this.hitboxOffsetRight,
+    //     this.height - this.hitboxOffsetTop - this.hitboxOffsetBottom
+    //   );
+    //   ctx.stroke();
+    // }
   }
 }

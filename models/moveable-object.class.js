@@ -42,12 +42,29 @@ class MoveableObject extends DrawableObject {
     this.currentImage++;
   }
 
+  /**
+   * Check collision using hitbox offsets for more accurate detection
+   * @param {MoveableObject} mo - The object to check collision with
+   * @returns {boolean} - True if objects are colliding
+   */
   isColliding(mo) {
+    // Calculate actual hitbox bounds for this object
+    let thisLeft = this.x + this.hitboxOffsetLeft;
+    let thisRight = this.x + this.width - this.hitboxOffsetRight;
+    let thisTop = this.y + this.hitboxOffsetTop;
+    let thisBottom = this.y + this.height - this.hitboxOffsetBottom;
+
+    // Calculate actual hitbox bounds for the other object
+    let moLeft = mo.x + mo.hitboxOffsetLeft;
+    let moRight = mo.x + mo.width - mo.hitboxOffsetRight;
+    let moTop = mo.y + mo.hitboxOffsetTop;
+    let moBottom = mo.y + mo.height - mo.hitboxOffsetBottom;
+
     return (
-      this.x + this.width > mo.x &&
-      this.x < mo.x + mo.width &&
-      this.y + this.height > mo.y &&
-      this.y < mo.y + mo.height
+      thisRight > moLeft &&
+      thisLeft < moRight &&
+      thisBottom > moTop &&
+      thisTop < moBottom
     );
   }
 

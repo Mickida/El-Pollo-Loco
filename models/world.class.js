@@ -6,7 +6,14 @@ class World {
   keyboard;
   camera_x = 0;
   statusBar = new StatusBar();
+  coinStatusBar = new CoinStatusBar();
+  bottleStatusBar = new BottleStatusBar();
+  endbossStatusBar = new EndbossStatusBar();
   throwableObjects = [];
+
+  // Collection tracking
+  collectedCoins = 0;
+  collectedBottles = 0;
 
   // Game state
   inGrace = false; // Grace period - no damage taken
@@ -14,10 +21,15 @@ class World {
   gameIntervals = []; // Store intervals for cleanup
   animationFrameId = null;
 
+  // Reference to endboss for status bar updates
+  endboss = null;
+
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    // Find endboss reference for status bar updates
+    this.endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
     this.draw();
     this.setWorld();
     this.run();
@@ -28,11 +40,110 @@ class World {
     let collisionInterval = setInterval(() => {
       if (!this.gameOver) {
         this.checkCollisions();
+        this.checkCoinCollisions();
+        this.checkBottleCollisions();
         this.checkThrowObjects();
+        this.checkThrownBottleCollisions();
         this.checkGameOver();
       }
     }, 200);
     this.gameIntervals.push(collisionInterval);
+  }
+
+  /**
+   * Check for thrown bottle collisions with enemies or ground
+   */
+  checkThrownBottleCollisions() {
+    this.throwableObjects.forEach((bottle, bottleIndex) => {
+      // Skip if already hit
+      if (bottle.hasHit) {
+        // Remove bottle after splash animation completes
+        if (bottle.splashComplete) {
+          this.throwableObjects.splice(bottleIndex, 1);
+        }
+        return;
+      }
+
+      // Check ground collision
+      if (bottle.hasHitGround()) {
+        bottle.startSplash();
+        if (window.AudioManager) {
+          window.AudioManager.playSfx("splash");
+        }
+        return;
+      }
+
+      // Check enemy collision
+      this.level.enemies.forEach((enemy, enemyIndex) => {
+        if (bottle.isColliding(enemy) && !bottle.hasHit) {
+          bottle.startSplash();
+
+          // Damage or kill enemy
+          if (enemy.hit) {
+            enemy.hit();
+            // Update endboss status bar if it's the endboss
+            if (enemy instanceof Endboss) {
+              this.endbossStatusBar.setPercentage(enemy.energy);
+              // Check if endboss is dead for win condition
+              if (enemy.isDead) {
+                this.triggerWin();
+              }
+            }
+          }
+
+          if (window.AudioManager) {
+            window.AudioManager.playSfx("splash");
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Trigger win condition when endboss is defeated
+   */
+  triggerWin() {
+    if (this.gameOver) return;
+    this.gameOver = true;
+    setTimeout(() => {
+      if (window.endGame) {
+        window.endGame("win");
+      }
+    }, 1000);
+  }
+
+  /**
+   * Check for coin collisions and collect coins
+   */
+  checkCoinCollisions() {
+    this.level.coins.forEach((coin, index) => {
+      if (this.character.isColliding(coin)) {
+        this.level.coins.splice(index, 1);
+        this.collectedCoins++;
+        this.coinStatusBar.setPercentage(this.collectedCoins * 20);
+        // Play coin sound if available
+        if (window.AudioManager) {
+          window.AudioManager.playSfx("coin");
+        }
+      }
+    });
+  }
+
+  /**
+   * Check for bottle collisions and collect bottles
+   */
+  checkBottleCollisions() {
+    this.level.bottles.forEach((bottle, index) => {
+      if (this.character.isColliding(bottle)) {
+        this.level.bottles.splice(index, 1);
+        this.collectedBottles++;
+        this.bottleStatusBar.setPercentage(this.collectedBottles * 20);
+        // Play bottle collect sound if available
+        if (window.AudioManager) {
+          window.AudioManager.playSfx("bottle");
+        }
+      }
+    });
   }
 
   /**
@@ -56,6 +167,11 @@ class World {
   stopGame() {
     this.gameOver = true;
 
+    // Stop snoring sound
+    if (window.AudioManager) {
+      window.AudioManager.stopSnoring();
+    }
+
     // Clear all intervals
     this.gameIntervals.forEach((interval) => {
       clearInterval(interval);
@@ -70,12 +186,19 @@ class World {
   }
 
   checkThrowObjects() {
-    if (this.keyboard.D) {
+    if (this.keyboard.D && this.collectedBottles > 0) {
+      // Determine throw position and direction based on character facing
+      let throwLeft = this.character.otherDirection;
+      let throwX = throwLeft ? this.character.x - 20 : this.character.x + 100;
       let bottle = new ThrowableObject(
-        this.character.x + 100,
-        this.character.y + 100
+        throwX,
+        this.character.y + 100,
+        throwLeft,
       );
       this.throwableObjects.push(bottle);
+      this.collectedBottles--;
+      this.bottleStatusBar.setPercentage(this.collectedBottles * 20);
+      this.keyboard.D = false; // Prevent multiple throws per key press
     }
   }
 
@@ -103,17 +226,25 @@ class World {
 
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.backgroundObjects);
-
-    this.ctx.translate(-this.camera_x, 0);
-    this.addToMap(this.statusBar);
-    this.ctx.translate(this.camera_x, 0);
-
     this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
     this.addObjectsToMap(this.throwableObjects);
 
+    // Draw endboss status bar above the endboss (moves with camera)
+    if (this.endboss) {
+      this.endbossStatusBar.x = this.endboss.x + 25;
+      this.endbossStatusBar.y = this.endboss.y - 10;
+      this.addToMap(this.endbossStatusBar);
+    }
+
     this.ctx.translate(-this.camera_x, 0);
+    // Draw all status bars LAST (fixed position, always on top)
+    this.addToMap(this.statusBar);
+    this.addToMap(this.coinStatusBar);
+    this.addToMap(this.bottleStatusBar);
 
     let self = this;
     this.animationFrameId = requestAnimationFrame(function () {

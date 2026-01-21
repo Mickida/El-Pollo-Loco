@@ -14,6 +14,8 @@ const AudioManager = {
     hurt: null,
     gameOver: null,
     win: null,
+    splash: null,
+    snoring: null,
   },
 
   // State
@@ -57,8 +59,15 @@ const AudioManager = {
     this.sounds.gameOver = new Audio("audio/game-over.wav");
     this.sounds.gameOver.volume = 0.6;
 
-    this.sounds.win = new Audio("audio/win.mp3");
+    this.sounds.win = new Audio("audio/win.wav");
     this.sounds.win.volume = 0.8;
+
+    this.sounds.splash = new Audio("audio/splash.wav");
+    this.sounds.splash.volume = 0.4;
+
+    this.sounds.snoring = new Audio("audio/snore.wav");
+    this.sounds.snoring.volume = 0.3;
+    this.sounds.snoring.loop = true;
 
     // Apply initial mute state
     this.applyMuteState();
@@ -188,6 +197,29 @@ const AudioManager = {
         sound.currentTime = 0;
       }
     });
+  },
+
+  /**
+   * Start playing snoring sound (looped)
+   */
+  startSnoring() {
+    if (this.muted) return;
+    if (this.sounds.snoring && this.sounds.snoring.paused) {
+      this.sounds.snoring.currentTime = 0;
+      this.sounds.snoring.play().catch((e) => {
+        console.log("Snoring play failed:", e.message);
+      });
+    }
+  },
+
+  /**
+   * Stop snoring sound
+   */
+  stopSnoring() {
+    if (this.sounds.snoring) {
+      this.sounds.snoring.pause();
+      this.sounds.snoring.currentTime = 0;
+    }
   },
 
   /**

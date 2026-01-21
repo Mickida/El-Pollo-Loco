@@ -1,6 +1,13 @@
 const level1 = new Level(
   [new Chicken(), new Chicken(), new Chicken(), new Endboss()],
-  [new Cloud()],
+  [
+    new Cloud(0),
+    new Cloud(500),
+    new Cloud(1000),
+    new Cloud(1500),
+    new Cloud(2000),
+    new Cloud(2500),
+  ],
   [
     new BackgroundObject("img/5_background/layers/air.png", -720),
     new BackgroundObject("img/5_background/layers/3_third_layer/2.png", -720),
@@ -20,29 +27,45 @@ const level1 = new Level(
     new BackgroundObject("img/5_background/layers/air.png", 720 * 2),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/1.png",
-      720 * 2
+      720 * 2,
     ),
     new BackgroundObject(
       "img/5_background/layers/2_second_layer/1.png",
-      720 * 2
+      720 * 2,
     ),
     new BackgroundObject(
       "img/5_background/layers/1_first_layer/1.png",
-      720 * 2
+      720 * 2,
     ),
 
     new BackgroundObject("img/5_background/layers/air.png", 720 * 3),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/2.png",
-      720 * 3
+      720 * 3,
     ),
     new BackgroundObject(
       "img/5_background/layers/2_second_layer/2.png",
-      720 * 3
+      720 * 3,
     ),
     new BackgroundObject(
       "img/5_background/layers/1_first_layer/2.png",
-      720 * 3
+      720 * 3,
     ),
-  ]
+  ],
+  // Coins - 5 coins at different positions (each worth 20%)
+  [
+    new Coin(350, 280),
+    new Coin(600, 200),
+    new Coin(900, 150),
+    new Coin(1200, 250),
+    new Coin(1600, 180),
+  ],
+  // Bottles - 5 bottles on ground at different positions (each worth 20%)
+  [
+    new CollectibleBottle(450, 350),
+    new CollectibleBottle(750, 350),
+    new CollectibleBottle(1050, 350),
+    new CollectibleBottle(1400, 350),
+    new CollectibleBottle(1800, 350),
+  ],
 );
