@@ -37,17 +37,25 @@ class World {
 
   run() {
     // Store interval references for cleanup
+    // Fast collision check for responsive gameplay (60fps)
     let collisionInterval = setInterval(() => {
       if (!this.gameOver) {
         this.checkCollisions();
         this.checkCoinCollisions();
         this.checkBottleCollisions();
-        this.checkThrowObjects();
         this.checkThrownBottleCollisions();
         this.checkGameOver();
       }
-    }, 200);
+    }, 1000 / 60);
     this.gameIntervals.push(collisionInterval);
+
+    // Slower interval for throw check to prevent spam
+    let throwInterval = setInterval(() => {
+      if (!this.gameOver) {
+        this.checkThrowObjects();
+      }
+    }, 100);
+    this.gameIntervals.push(throwInterval);
   }
 
   /**
@@ -73,21 +81,18 @@ class World {
         return;
       }
 
-      // Check enemy collision
-      this.level.enemies.forEach((enemy, enemyIndex) => {
-        if (bottle.isColliding(enemy) && !bottle.hasHit) {
+      // Check enemy collision - bottles only damage the Endboss
+      this.level.enemies.forEach((enemy) => {
+        if (bottle.isColliding(enemy) && !bottle.hasHit && enemy instanceof Endboss) {
           bottle.startSplash();
 
-          // Damage or kill enemy
+          // Damage endboss
           if (enemy.hit) {
             enemy.hit();
-            // Update endboss status bar if it's the endboss
-            if (enemy instanceof Endboss) {
-              this.endbossStatusBar.setPercentage(enemy.energy);
-              // Check if endboss is dead for win condition
-              if (enemy.isDead) {
-                this.triggerWin();
-              }
+            this.endbossStatusBar.setPercentage(enemy.energy);
+            // Check if endboss is dead for win condition
+            if (enemy.isDead) {
+              this.triggerWin();
             }
           }
 
@@ -203,15 +208,44 @@ class World {
   }
 
   checkCollisions() {
-    // Skip collision damage during grace period
     if (this.inGrace) return;
 
     this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
+      if (enemy.isDead) return;
+      if (!this.character.isColliding(enemy)) return;
+
+      let isChicken = enemy instanceof Chicken || enemy instanceof SmallChicken;
+
+      // Jump kill conditions:
+      // 1. Character is above ground (jumping/falling)
+      // 2. Character is moving downward (falling)
+      // 3. Character's bottom is above enemy's top third
+      let isAboveGround = this.character.isAboveGround();
+      let isFalling = this.character.speedY < 0;
+      let characterBottom = this.character.y + this.character.height - this.character.hitboxOffsetBottom;
+      let enemyTop = enemy.y + (enemy.hitboxOffsetTop || 0);
+      let enemyHeight = enemy.height - (enemy.hitboxOffsetTop || 0) - (enemy.hitboxOffsetBottom || 0);
+      let isAboveEnemy = characterBottom < enemyTop + enemyHeight * 0.6;
+
+      if (isChicken && isAboveGround && isFalling && isAboveEnemy) {
+        enemy.hit();
+        this.character.speedY = 15; // Bounce up
+        // Short grace period to prevent double-hit
+        this.inGrace = true;
+        setTimeout(() => {
+          this.inGrace = false;
+        }, 300);
+        if (window.AudioManager) {
+          window.AudioManager.playSfx("hit");
+        }
+      } else {
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
-
-        // Play hurt sound
+        // Grace period after taking damage
+        this.inGrace = true;
+        setTimeout(() => {
+          this.inGrace = false;
+        }, 1000);
         if (window.AudioManager) {
           window.AudioManager.playSfx("hurt");
         }

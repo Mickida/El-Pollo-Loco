@@ -16,6 +16,9 @@ const AudioManager = {
     win: null,
     splash: null,
     snoring: null,
+    coin: null,
+    chickenDead: null,
+    smallChickenDead: null,
   },
 
   // State
@@ -68,6 +71,15 @@ const AudioManager = {
     this.sounds.snoring = new Audio("audio/snore.wav");
     this.sounds.snoring.volume = 0.3;
     this.sounds.snoring.loop = true;
+
+    this.sounds.coin = new Audio("audio/coin.wav");
+    this.sounds.coin.volume = 0.4;
+
+    this.sounds.chickenDead = new Audio("audio/chickens-dead.wav");
+    this.sounds.chickenDead.volume = 0.2;
+
+    this.sounds.smallChickenDead = new Audio("audio/little-chickens-dead.wav");
+    this.sounds.smallChickenDead.volume = 0.2;
 
     // Apply initial mute state
     this.applyMuteState();
@@ -186,6 +198,7 @@ const AudioManager = {
    * Stop all sounds
    */
   stopAll() {
+    this.isSnoring = false;
     Object.values(this.sounds).forEach((sound) => {
       if (Array.isArray(sound)) {
         sound.forEach((s) => {
@@ -199,15 +212,22 @@ const AudioManager = {
     });
   },
 
+  // Track snoring state
+  isSnoring: false,
+
   /**
    * Start playing snoring sound (looped)
    */
   startSnoring() {
     if (this.muted) return;
-    if (this.sounds.snoring && this.sounds.snoring.paused) {
+    if (this.isSnoring) return; // Already snoring
+
+    if (this.sounds.snoring) {
+      this.isSnoring = true;
       this.sounds.snoring.currentTime = 0;
       this.sounds.snoring.play().catch((e) => {
         console.log("Snoring play failed:", e.message);
+        this.isSnoring = false;
       });
     }
   },
@@ -216,9 +236,10 @@ const AudioManager = {
    * Stop snoring sound
    */
   stopSnoring() {
-    if (this.sounds.snoring) {
+    if (this.sounds.snoring && this.isSnoring) {
       this.sounds.snoring.pause();
       this.sounds.snoring.currentTime = 0;
+      this.isSnoring = false;
     }
   },
 

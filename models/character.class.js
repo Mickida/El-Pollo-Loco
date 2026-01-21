@@ -85,7 +85,7 @@ class Character extends MoveableObject {
 
   // Track last activity for sleep animation
   lastActivityTime = new Date().getTime();
-  sleepDelay = 15000; // 15 seconds until sleep animation
+  sleepDelay = 7000; // 7 seconds until sleep animation
 
   // Track if currently in a jump
   isJumping = false;
@@ -233,8 +233,10 @@ class Character extends MoveableObject {
         this.resetActivityTimer();
       } else if (this.isAboveGround()) {
         this.switchAnimationState("jump");
-        // Play jump animation smoothly through all frames
-        this.playAnimationSmooth(this.IMAGES_JUMPING, "jumpIndex");
+        // Play jump animation once, then hold last frame
+        if (this.jumpIndex < this.IMAGES_JUMPING.length) {
+          this.playAnimationOnce(this.IMAGES_JUMPING, "jumpIndex");
+        }
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.switchAnimationState("walk");
         this.playAnimationSmooth(this.IMAGES_WALKING, "walkIndex");

@@ -69,9 +69,10 @@ const Templates = {
     <div id="game-container" class="game-container hidden">
       <canvas id="canvas" width="720" height="480"></canvas>
       <div class="game-controls">
-        <button id="mute-btn" class="btn btn-small" onclick="AudioManager.toggleMute()" title="Mute">🔊</button>
-        <button class="btn btn-small" onclick="toggleFullscreen()">⛶</button>
-        <button class="btn btn-small" onclick="backToMenu()">☰</button>
+        <button id="mute-btn" class="btn btn-small" onclick="AudioManager.toggleMute(); this.blur();" title="Mute">🔊</button>
+        <button class="btn btn-small" onclick="restartGame(); this.blur();" title="Restart">🔄</button>
+        <button class="btn btn-small" onclick="toggleFullscreen(); this.blur();" title="Fullscreen">⛶</button>
+        <button class="btn btn-small" onclick="backToMenu(); this.blur();" title="Menu">☰</button>
       </div>
     </div>
   `,

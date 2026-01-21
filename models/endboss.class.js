@@ -1,13 +1,13 @@
 class Endboss extends MoveableObject {
-  height = 400;
-  width = 250;
-  y = 60;
+  height = 320;
+  width = 200;
+  y = 125;
 
   // Hitbox offsets for realistic collision
-  hitboxOffsetTop = 70;
-  hitboxOffsetBottom = 20;
-  hitboxOffsetLeft = 30;
-  hitboxOffsetRight = 30;
+  hitboxOffsetTop = 55;
+  hitboxOffsetBottom = 16;
+  hitboxOffsetLeft = 24;
+  hitboxOffsetRight = 24;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -63,7 +63,7 @@ class Endboss extends MoveableObject {
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-    this.x = 2600;
+    this.x = 2200;
     this.animate();
   }
 

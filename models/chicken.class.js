@@ -18,12 +18,18 @@ class Chicken extends MoveableObject {
   IMAGES_DEAD = ["img/3_enemies_chicken/chicken_normal/2_dead/dead.png"];
 
   isDead = false;
+  maxHealth = 2;
+  health = 2; // Normal chickens take 2 hits to kill
   moveInterval;
   animateInterval;
 
-  constructor() {
+  /**
+   * Creates a new Chicken enemy
+   * @param {number} baseX - Base x position, will be varied by ±100px
+   */
+  constructor(baseX = 350) {
     super().loadImage("img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
-    this.x = 200 + Math.random() * 500;
+    this.x = baseX + (Math.random() * 200 - 100);
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.15 + Math.random() * 0.25;
@@ -45,18 +51,62 @@ class Chicken extends MoveableObject {
   }
 
   /**
-   * Called when chicken is hit by a bottle
+   * Called when chicken is hit by a bottle or jumped on
    */
   hit() {
     if (this.isDead) return;
-    this.isDead = true;
-    this.loadImage(this.IMAGES_DEAD[0]);
-    // Stop movement
-    if (this.moveInterval) {
-      clearInterval(this.moveInterval);
+    this.health--;
+    if (this.health <= 0) {
+      this.isDead = true;
+      this.loadImage(this.IMAGES_DEAD[0]);
+      // Play death sound
+      if (window.AudioManager) {
+        window.AudioManager.playSfx("chickenDead");
+      }
+      // Stop movement
+      if (this.moveInterval) {
+        clearInterval(this.moveInterval);
+      }
+      if (this.animateInterval) {
+        clearInterval(this.animateInterval);
+      }
     }
-    if (this.animateInterval) {
-      clearInterval(this.animateInterval);
+  }
+
+  /**
+   * Draw the chicken and its health bar
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(ctx) {
+    super.draw(ctx);
+    // Only show health bar if damaged and not dead
+    if (this.health < this.maxHealth && !this.isDead) {
+      this.drawHealthBar(ctx);
     }
+  }
+
+  /**
+   * Draw health bar above the chicken
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  drawHealthBar(ctx) {
+    let barWidth = 40;
+    let barHeight = 5;
+    let barX = this.x + (this.width - barWidth) / 2;
+    let barY = this.y - 10;
+    let healthPercent = this.health / this.maxHealth;
+
+    // Background (red)
+    ctx.fillStyle = "red";
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    // Health (green)
+    ctx.fillStyle = "lime";
+    ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
+
+    // Border
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(barX, barY, barWidth, barHeight);
   }
 }

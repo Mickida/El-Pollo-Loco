@@ -4,26 +4,12 @@ let keyboard = new Keyboard();
 let gameStarted = false;
 let gameEnded = false;
 
-// Grace period duration in milliseconds (player is invulnerable at start)
-const GRACE_PERIOD_MS = 3000;
-
 /**
  * Initializes the game when called (after clicking Start)
  */
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard);
-
-  // Enable grace period at start
-  world.inGrace = true;
-  setTimeout(() => {
-    if (world) {
-      world.inGrace = false;
-      console.log("Grace period ended - good luck!");
-    }
-  }, GRACE_PERIOD_MS);
-
-  console.log("Game initialized with", GRACE_PERIOD_MS + "ms grace period");
 }
 
 /**
@@ -83,11 +69,41 @@ function restartGame() {
  * Reset level to initial state (recreate enemies, etc.)
  */
 function resetLevel() {
-  // Recreate level1 with fresh enemies
+  // Recreate level1 with fresh enemies, clouds, coins and bottles
   window.level1 = new Level(
-    [new Chicken(), new Chicken(), new Chicken(), new Endboss()],
-    [new Cloud()],
-    createBackgroundObjects()
+    [
+      new Chicken(400),
+      new Chicken(700),
+      new SmallChicken(1000),
+      new SmallChicken(1300),
+      new SmallChicken(1500),
+      new Chicken(1800),
+      new Chicken(2100),
+      new Endboss(),
+    ],
+    [
+      new Cloud(0),
+      new Cloud(500),
+      new Cloud(1000),
+      new Cloud(1500),
+      new Cloud(2000),
+      new Cloud(2500),
+    ],
+    createBackgroundObjects(),
+    [
+      new Coin(350, 280),
+      new Coin(600, 200),
+      new Coin(900, 150),
+      new Coin(1200, 250),
+      new Coin(1600, 180),
+    ],
+    [
+      new CollectibleBottle(450, 350),
+      new CollectibleBottle(750, 350),
+      new CollectibleBottle(1050, 350),
+      new CollectibleBottle(1400, 350),
+      new CollectibleBottle(1800, 350),
+    ]
   );
 }
 
