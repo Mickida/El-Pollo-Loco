@@ -3,6 +3,7 @@ let world;
 let keyboard = new Keyboard();
 let gameStarted = false;
 let gameEnded = false;
+let gamePaused = false;
 
 /**
  * Initializes the game when called (after clicking Start)
@@ -50,8 +51,16 @@ function restartGame() {
   // Reset state
   gameStarted = false;
   gameEnded = false;
+  gamePaused = false;
   world = null;
-  keyboard = new Keyboard();
+
+  // Reset keyboard state (reuse the same object for event listeners)
+  keyboard.LEFT = false;
+  keyboard.RIGHT = false;
+  keyboard.UP = false;
+  keyboard.DOWN = false;
+  keyboard.SPACE = false;
+  keyboard.D = false;
 
   // Reset level (recreate enemies)
   resetLevel();
@@ -70,7 +79,7 @@ function restartGame() {
  */
 function resetLevel() {
   // Recreate level1 with fresh enemies, clouds, coins and bottles
-  window.level1 = new Level(
+  level1 = new Level(
     [
       new Chicken(400),
       new Chicken(700),
@@ -189,10 +198,85 @@ function endGame(type) {
 }
 
 /**
- * Returns to the main menu (reloads the page)
+ * Returns to the main menu (pauses game if running)
  */
 function backToMenu() {
-  // Stop audio before reload
+  if (gameStarted && !gameEnded) {
+    pauseGame();
+  } else {
+    goToMainMenu();
+  }
+}
+
+/**
+ * Pause the game and show landing page with resume option
+ */
+function pauseGame() {
+  gamePaused = true;
+
+  // Stop all game loops
+  if (world) {
+    world.pauseGame();
+  }
+
+  // Stop music
+  if (window.AudioManager) {
+    window.AudioManager.stopMusic();
+  }
+
+  document.getElementById("game-container").classList.add("hidden");
+  document.getElementById("landing-page").classList.remove("hidden");
+  updateStartButton();
+}
+
+/**
+ * Resume a paused game
+ */
+function resumeGame() {
+  gamePaused = false;
+  document.getElementById("landing-page").classList.add("hidden");
+  document.getElementById("game-container").classList.remove("hidden");
+
+  // Resume all game loops
+  if (world) {
+    world.resumeGame();
+  }
+
+  // Resume music
+  if (window.AudioManager) {
+    window.AudioManager.playMusic();
+  }
+}
+
+/**
+ * Update start button text based on game state
+ */
+function updateStartButton() {
+  let startBtn = document.getElementById("start-btn");
+  let restartBtn = document.getElementById("restart-btn");
+  if (gameStarted && !gameEnded) {
+    if (startBtn) {
+      startBtn.innerHTML = "<span>▶</span> Resume Game";
+      startBtn.onclick = resumeGame;
+    }
+    if (restartBtn) {
+      restartBtn.classList.remove("hidden");
+    }
+  } else {
+    if (startBtn) {
+      startBtn.innerHTML = "<span>▶</span> Start Game";
+      startBtn.onclick = startGame;
+    }
+    if (restartBtn) {
+      restartBtn.classList.add("hidden");
+    }
+  }
+}
+
+/**
+ * Go to main menu and reset game state
+ */
+function goToMainMenu() {
   if (window.AudioManager) {
     window.AudioManager.stopAll();
   }

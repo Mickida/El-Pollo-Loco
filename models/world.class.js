@@ -2,21 +2,22 @@
  * Main game world that manages all game objects and logic
  */
 class World {
-  character = new Character();
-  level = level1;
+  character;
+  level;
   ctx;
   canvas;
   keyboard;
   camera_x = 0;
-  statusBar = new StatusBar();
-  coinStatusBar = new CoinStatusBar();
-  bottleStatusBar = new BottleStatusBar();
-  endbossStatusBar = new EndbossStatusBar();
+  statusBar;
+  coinStatusBar;
+  bottleStatusBar;
+  endbossStatusBar;
   throwableObjects = [];
   collectedCoins = 0;
   collectedBottles = 0;
   inGrace = false;
   gameOver = false;
+  gamePaused = false;
   gameIntervals = [];
   animationFrameId = null;
   endboss = null;
@@ -30,6 +31,12 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.level = level1;
+    this.character = new Character();
+    this.statusBar = new StatusBar();
+    this.coinStatusBar = new CoinStatusBar();
+    this.bottleStatusBar = new BottleStatusBar();
+    this.endbossStatusBar = new EndbossStatusBar();
     // Find endboss reference for status bar updates
     this.endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
     this.draw();
@@ -135,7 +142,9 @@ class World {
    * @returns {boolean} True if valid endboss hit
    */
   isValidEndbossHit(bottle, enemy) {
-    return bottle.isColliding(enemy) && !bottle.hasHit && enemy instanceof Endboss;
+    return (
+      bottle.isColliding(enemy) && !bottle.hasHit && enemy instanceof Endboss
+    );
   }
 
   /**
@@ -146,9 +155,19 @@ class World {
     if (enemy.hit) {
       enemy.hit();
       this.endbossStatusBar.setPercentage(enemy.energy);
+      this.playEndbossHitSound();
       if (enemy.isDead) {
         this.triggerWin();
       }
+    }
+  }
+
+  /**
+   * Play endboss hit sound effect
+   */
+  playEndbossHitSound() {
+    if (window.AudioManager) {
+      window.AudioManager.playSfx("endbossHit");
     }
   }
 
@@ -224,6 +243,80 @@ class World {
   }
 
   /**
+   * Pause the game - stops all loops but preserves state
+   */
+  pauseGame() {
+    if (this.gamePaused) return;
+    this.gamePaused = true;
+
+    // Stop sounds
+    if (window.AudioManager) {
+      window.AudioManager.stopSnoring();
+    }
+
+    // Clear all world intervals
+    this.gameIntervals.forEach((interval) => {
+      clearInterval(interval);
+    });
+    this.gameIntervals = [];
+
+    // Stop all object intervals
+    this.stopEnemyIntervals();
+    this.stopCloudIntervals();
+    this.stopCollectibleIntervals();
+
+    // Stop character intervals
+    if (this.character && this.character.stopIntervals) {
+      this.character.stopIntervals();
+    }
+
+    // Cancel animation frame
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+
+  /**
+   * Resume the game after pause
+   */
+  resumeGame() {
+    if (!this.gamePaused) return;
+    this.gamePaused = false;
+
+    // Restart world loops
+    this.run();
+
+    // Restart character
+    if (this.character) {
+      this.character.applyGravity();
+      this.character.animate();
+    }
+
+    // Restart enemies
+    this.level.enemies.forEach((enemy) => {
+      if (enemy.animate) enemy.animate();
+      if (enemy.startMovement) enemy.startMovement();
+    });
+
+    // Restart clouds
+    this.level.clouds.forEach((cloud) => {
+      if (cloud.animate) cloud.animate();
+    });
+
+    // Restart collectibles
+    this.level.coins.forEach((coin) => {
+      if (coin.animate) coin.animate();
+    });
+    this.level.bottles.forEach((bottle) => {
+      if (bottle.animate) bottle.animate();
+    });
+
+    // Restart draw loop
+    this.draw();
+  }
+
+  /**
    * Stop all game loops and intervals
    */
   stopGame() {
@@ -240,11 +333,63 @@ class World {
     });
     this.gameIntervals = [];
 
+    // Stop all enemy intervals
+    this.stopEnemyIntervals();
+
+    // Stop cloud intervals
+    this.stopCloudIntervals();
+
+    // Stop collectible intervals
+    this.stopCollectibleIntervals();
+
+    // Stop character intervals
+    if (this.character && this.character.stopIntervals) {
+      this.character.stopIntervals();
+    }
+
     // Cancel animation frame
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
+  }
+
+  /**
+   * Stop all enemy animation and movement intervals
+   */
+  stopEnemyIntervals() {
+    this.level.enemies.forEach((enemy) => {
+      if (enemy.stopIntervals) {
+        enemy.stopIntervals();
+      }
+    });
+  }
+
+  /**
+   * Stop all cloud movement intervals
+   */
+  stopCloudIntervals() {
+    this.level.clouds.forEach((cloud) => {
+      if (cloud.stopIntervals) {
+        cloud.stopIntervals();
+      }
+    });
+  }
+
+  /**
+   * Stop all collectible intervals (coins, bottles)
+   */
+  stopCollectibleIntervals() {
+    this.level.coins.forEach((coin) => {
+      if (coin.stopIntervals) {
+        coin.stopIntervals();
+      }
+    });
+    this.level.bottles.forEach((bottle) => {
+      if (bottle.stopIntervals) {
+        bottle.stopIntervals();
+      }
+    });
   }
 
   /**
@@ -311,9 +456,15 @@ class World {
    * @returns {boolean} True if character is above enemy
    */
   isCharacterAboveEnemy(enemy) {
-    let charBottom = this.character.y + this.character.height - this.character.hitboxOffsetBottom;
+    let charBottom =
+      this.character.y +
+      this.character.height -
+      this.character.hitboxOffsetBottom;
     let enemyTop = enemy.y + (enemy.hitboxOffsetTop || 0);
-    let enemyHeight = enemy.height - (enemy.hitboxOffsetTop || 0) - (enemy.hitboxOffsetBottom || 0);
+    let enemyHeight =
+      enemy.height -
+      (enemy.hitboxOffsetTop || 0) -
+      (enemy.hitboxOffsetBottom || 0);
     return charBottom < enemyTop + enemyHeight * 0.6;
   }
 
@@ -436,11 +587,14 @@ class World {
   }
 
   /**
-   * Set the world reference on the character and start animations
+   * Set the world reference on the character and endboss, then start animations
    */
   setWorld() {
     this.character.world = this;
     this.character.animate();
+    if (this.endboss) {
+      this.endboss.world = this;
+    }
   }
 
   /**

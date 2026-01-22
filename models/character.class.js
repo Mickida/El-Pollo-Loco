@@ -4,7 +4,7 @@
  */
 class Character extends MoveableObject {
   height = 280;
-  y = 55;
+  y = 155;
 
   // Hitbox offsets for realistic collision
   hitboxOffsetTop = 120;
@@ -97,6 +97,12 @@ class Character extends MoveableObject {
   // Track current animation state for smooth transitions
   currentAnimationState = "idle";
 
+  // Store interval IDs for cleanup
+  movementInterval;
+  actionAnimationInterval;
+  idleAnimationInterval;
+  sleepAnimationInterval;
+
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
     this.loadImages(this.IMAGES_IDLE);
@@ -187,6 +193,8 @@ class Character extends MoveableObject {
    * Start all animation loops for the character
    */
   animate() {
+    this.stopIntervals();
+    this.applyGravity();
     this.startMovementLoop();
     this.startActionAnimationLoop();
     this.startIdleAnimationLoop();
@@ -197,7 +205,8 @@ class Character extends MoveableObject {
    * Handle character movement at 60 FPS
    */
   startMovementLoop() {
-    setInterval(() => {
+    this.movementInterval = setInterval(() => {
+      if (!this.world) return;
       let isMoving = this.handleMovementInput();
       this.handleWalkSound(isMoving);
       this.handleJumpInput();
@@ -265,7 +274,8 @@ class Character extends MoveableObject {
    * Handle action animations (dead, hurt, jump, walk) at 80ms intervals
    */
   startActionAnimationLoop() {
-    setInterval(() => {
+    this.actionAnimationInterval = setInterval(() => {
+      if (!this.world) return;
       if (this.isDead()) {
         this.playDeadAnimation();
       } else if (this.isHurt()) {
@@ -317,7 +327,8 @@ class Character extends MoveableObject {
    * Handle idle animation at 150ms intervals
    */
   startIdleAnimationLoop() {
-    setInterval(() => {
+    this.idleAnimationInterval = setInterval(() => {
+      if (!this.world) return;
       if (this.canPlayIdleAnimation()) {
         this.switchAnimationState("idle");
         this.playAnimationSmooth(this.IMAGES_IDLE, "idleIndex");
@@ -343,7 +354,7 @@ class Character extends MoveableObject {
    * Handle sleep animation at 200ms intervals
    */
   startSleepAnimationLoop() {
-    setInterval(() => {
+    this.sleepAnimationInterval = setInterval(() => {
       if (this.world.gameOver) {
         this.stopSnoring();
         return;
@@ -388,5 +399,16 @@ class Character extends MoveableObject {
     if (window.AudioManager) {
       window.AudioManager.stopSnoring();
     }
+  }
+
+  /**
+   * Stop all intervals (for game restart/cleanup)
+   */
+  stopIntervals() {
+    if (this.movementInterval) clearInterval(this.movementInterval);
+    if (this.actionAnimationInterval) clearInterval(this.actionAnimationInterval);
+    if (this.idleAnimationInterval) clearInterval(this.idleAnimationInterval);
+    if (this.sleepAnimationInterval) clearInterval(this.sleepAnimationInterval);
+    if (this.gravityInterval) clearInterval(this.gravityInterval);
   }
 }

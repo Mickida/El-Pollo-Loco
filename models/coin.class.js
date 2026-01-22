@@ -5,6 +5,7 @@
 class Coin extends MoveableObject {
   height = 100;
   width = 100;
+  animateInterval;
 
   IMAGES_COIN = ["img/8_coin/coin_1.png", "img/8_coin/coin_2.png"];
 
@@ -25,8 +26,18 @@ class Coin extends MoveableObject {
    * Animate the coin with a simple rotation effect
    */
   animate() {
-    setInterval(() => {
+    this.stopIntervals();
+    this.animateInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_COIN);
     }, 300);
+  }
+
+  /**
+   * Stop all intervals (for game restart/cleanup)
+   */
+  stopIntervals() {
+    if (this.animateInterval) {
+      clearInterval(this.animateInterval);
+    }
   }
 }

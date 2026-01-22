@@ -5,6 +5,7 @@
 class CollectibleBottle extends MoveableObject {
   height = 80;
   width = 70;
+  animateInterval;
 
   IMAGES_BOTTLE = [
     "img/6_salsa_bottle/1_salsa_bottle_on_ground.png",
@@ -28,8 +29,18 @@ class CollectibleBottle extends MoveableObject {
    * Animate the bottle with a simple glint effect
    */
   animate() {
-    setInterval(() => {
+    this.stopIntervals();
+    this.animateInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_BOTTLE);
     }, 400);
+  }
+
+  /**
+   * Stop all intervals (for game restart/cleanup)
+   */
+  stopIntervals() {
+    if (this.animateInterval) {
+      clearInterval(this.animateInterval);
+    }
   }
 }

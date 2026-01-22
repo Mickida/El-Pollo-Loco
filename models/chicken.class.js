@@ -44,6 +44,7 @@ class Chicken extends MoveableObject {
    * Start movement and animation loops
    */
   animate() {
+    this.stopIntervals();
     this.startMovementLoop();
     this.startAnimationLoop();
   }
@@ -128,5 +129,17 @@ class Chicken extends MoveableObject {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
     ctx.strokeRect(barX, barY, barWidth, barHeight);
+  }
+
+  /**
+   * Stop all intervals (for game restart/cleanup)
+   */
+  stopIntervals() {
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
+    }
+    if (this.animateInterval) {
+      clearInterval(this.animateInterval);
+    }
   }
 }

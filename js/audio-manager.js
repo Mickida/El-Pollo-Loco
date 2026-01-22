@@ -19,6 +19,7 @@ const AudioManager = {
     coin: null,
     chickenDead: null,
     smallChickenDead: null,
+    endbossHit: null,
   },
 
   // State
@@ -66,7 +67,7 @@ const AudioManager = {
     this.sounds.win.volume = 0.8;
 
     this.sounds.splash = new Audio("audio/splash.wav");
-    this.sounds.splash.volume = 0.4;
+    this.sounds.splash.volume = 0.1;
 
     this.sounds.snoring = new Audio("audio/snore.wav");
     this.sounds.snoring.volume = 0.3;
@@ -80,6 +81,9 @@ const AudioManager = {
 
     this.sounds.smallChickenDead = new Audio("audio/little-chickens-dead.wav");
     this.sounds.smallChickenDead.volume = 0.2;
+
+    this.sounds.endbossHit = new Audio("audio/endboss-hit.mp3");
+    this.sounds.endbossHit.volume = 0.4;
 
     // Apply initial mute state
     this.applyMuteState();
@@ -139,12 +143,20 @@ const AudioManager = {
    * Play background music
    */
   playMusic() {
-    if (this.sounds.music && !this.muted) {
-      this.sounds.music.currentTime = 0;
-      this.sounds.music.play().catch((e) => {
-        console.log("Music autoplay blocked:", e.message);
-      });
-    }
+    if (!this.sounds.music) return;
+    if (this.muted) return;
+
+    // Reset and play with a small delay to ensure audio is ready
+    this.sounds.music.pause();
+    this.sounds.music.currentTime = 0;
+
+    setTimeout(() => {
+      if (this.sounds.music && !this.muted) {
+        this.sounds.music.play().catch((e) => {
+          console.log("Music autoplay blocked:", e.message);
+        });
+      }
+    }, 50);
   },
 
   /**

@@ -42,6 +42,7 @@ class SmallChicken extends MoveableObject {
    * Start movement and animation loops
    */
   animate() {
+    this.stopIntervals();
     this.startMovementLoop();
     this.startAnimationLoop();
   }
@@ -79,6 +80,18 @@ class SmallChicken extends MoveableObject {
     if (window.AudioManager) {
       window.AudioManager.playSfx("smallChickenDead");
     }
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
+    }
+    if (this.animateInterval) {
+      clearInterval(this.animateInterval);
+    }
+  }
+
+  /**
+   * Stop all intervals (for game restart/cleanup)
+   */
+  stopIntervals() {
     if (this.moveInterval) {
       clearInterval(this.moveInterval);
     }

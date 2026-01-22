@@ -7,6 +7,7 @@ const Templates = {
         <p class="game-subtitle">The crazy chicken adventure awaits!</p>
         <div class="button-container">
           <button id="start-btn" class="btn btn-primary" onclick="startGame()"><span>▶</span> Start Game</button>
+          <button id="restart-btn" class="btn btn-primary hidden" onclick="restartGame()"><span>🔄</span> Restart Game</button>
           <button id="info-btn" class="btn btn-secondary" onclick="showInfoDialog()"><span>ℹ</span> Instructions</button>
           <button id="keys-btn" class="btn btn-secondary" onclick="showKeybindingsDialog()"><span>⌨</span> Keybindings</button>
           <button id="fullscreen-btn" class="btn btn-secondary" onclick="toggleFullscreen()"><span>⛶</span> Fullscreen</button>
@@ -83,7 +84,7 @@ const Templates = {
         <img id="endscreen-image" src="" alt="Game Over" class="endscreen-image">
         <div class="endscreen-buttons">
           <button class="btn btn-primary" onclick="restartGame()"><span>🔄</span> Restart</button>
-          <button class="btn btn-secondary" onclick="backToMenu()"><span>🏠</span> Home</button>
+          <button class="btn btn-secondary" onclick="goToMainMenu()"><span>🏠</span> Home</button>
         </div>
       </div>
     </div>

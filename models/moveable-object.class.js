@@ -9,6 +9,7 @@ class MoveableObject extends DrawableObject {
   acceleration = 2.5;
   energy = 100;
   lastHit = 0;
+  gravityInterval;
 
   /**
    * Make the object jump by setting vertical speed
@@ -21,7 +22,8 @@ class MoveableObject extends DrawableObject {
    * Apply gravity to the object at 25 FPS
    */
   applyGravity() {
-    setInterval(() => {
+    if (this.gravityInterval) clearInterval(this.gravityInterval);
+    this.gravityInterval = setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
@@ -93,15 +95,14 @@ class MoveableObject extends DrawableObject {
   }
 
   /**
-   * Apply damage to the object (reduces energy by 5)
+   * Apply damage to the object (reduces energy by 20)
    */
   hit() {
-    this.energy -= 5;
+    this.energy -= 20;
     if (this.energy < 0) {
       this.energy = 0;
-    } else {
-      this.lastHit = new Date().getTime();
     }
+    this.lastHit = new Date().getTime();
   }
 
   /**

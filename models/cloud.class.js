@@ -7,6 +7,7 @@ class Cloud extends MoveableObject {
   height = 250;
   width = 500;
   levelWidth = 720 * 4;
+  moveInterval;
 
   /**
    * Create a new cloud
@@ -25,7 +26,8 @@ class Cloud extends MoveableObject {
    * Start the cloud movement animation
    */
   animate() {
-    setInterval(() => {
+    this.stopIntervals();
+    this.moveInterval = setInterval(() => {
       this.moveLeft();
       this.recycleIfOffScreen();
     }, 1000 / 60);
@@ -37,6 +39,15 @@ class Cloud extends MoveableObject {
   recycleIfOffScreen() {
     if (this.x + this.width < -100) {
       this.x = this.levelWidth + Math.random() * 500;
+    }
+  }
+
+  /**
+   * Stop all intervals (for game restart/cleanup)
+   */
+  stopIntervals() {
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
     }
   }
 }
