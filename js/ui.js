@@ -11,6 +11,7 @@
     root.insertAdjacentHTML("beforeend", window.Templates.keybindingsDialog);
     root.insertAdjacentHTML("beforeend", window.Templates.gameContainer);
     root.insertAdjacentHTML("beforeend", window.Templates.endscreen);
+    root.insertAdjacentHTML("beforeend", window.Templates.rotateOverlay);
   }
 
   /**

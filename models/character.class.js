@@ -4,6 +4,7 @@
  */
 class Character extends MoveableObject {
   height = 280;
+  x = 150;
   y = 155;
 
   // Hitbox offsets for realistic collision
@@ -97,6 +98,11 @@ class Character extends MoveableObject {
   // Track current animation state for smooth transitions
   currentAnimationState = "idle";
 
+  // Dead animation tracking
+  deadAnimationFinished = false;
+  deadAnimationFrame = 0;
+  deadAnimationDelay = 0; // Delay counter to slow down dead animation
+
   // Store interval IDs for cleanup
   movementInterval;
   actionAnimationInterval;
@@ -184,6 +190,8 @@ class Character extends MoveableObject {
           break;
         case "dead":
           this.deadIndex = 0;
+          this.deadAnimationFrame = 0;
+          this.deadAnimationDelay = 0;
           break;
       }
     }
@@ -207,11 +215,12 @@ class Character extends MoveableObject {
   startMovementLoop() {
     this.movementInterval = setInterval(() => {
       if (!this.world) return;
+      if (this.isDead()) return; // Stop all movement when dead
       let isMoving = this.handleMovementInput();
       this.handleWalkSound(isMoving);
       this.handleJumpInput();
       this.updateJumpState();
-      this.world.camera_x = -this.x + 100;
+      this.world.camera_x = -this.x + 130;
     }, 1000 / 60);
   }
 
@@ -289,11 +298,39 @@ class Character extends MoveableObject {
   }
 
   /**
-   * Play death animation
+   * Play death animation once then mark as finished
+   * Runs slower than other animations (every 200ms instead of 80ms)
    */
   playDeadAnimation() {
-    this.switchAnimationState("dead");
-    this.playAnimationSmooth(this.IMAGES_DEAD, "deadIndex");
+    if (this.currentAnimationState !== "dead") {
+      this.switchAnimationState("dead");
+    }
+    if (this.deadAnimationFinished) {
+      // Keep showing the last frame of the dead animation
+      this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
+      return;
+    }
+
+    // Slow down animation: only advance frame every 2.5 calls (200ms instead of 80ms)
+    this.deadAnimationDelay++;
+    if (this.deadAnimationDelay < 2.5) {
+      return; // Skip this frame update
+    }
+    this.deadAnimationDelay = 0;
+
+    if (this.deadAnimationFrame < this.IMAGES_DEAD.length) {
+      let path = this.IMAGES_DEAD[this.deadAnimationFrame];
+      this.img = this.imageCache[path];
+      this.deadAnimationFrame++;
+
+      // Mark animation as finished when we've shown all frames
+      if (this.deadAnimationFrame >= this.IMAGES_DEAD.length) {
+        this.deadAnimationFinished = true;
+        // Ensure last frame stays visible
+        this.img =
+          this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
+      }
+    }
   }
 
   /**
@@ -329,6 +366,7 @@ class Character extends MoveableObject {
   startIdleAnimationLoop() {
     this.idleAnimationInterval = setInterval(() => {
       if (!this.world) return;
+      if (this.isDead()) return;
       if (this.canPlayIdleAnimation()) {
         this.switchAnimationState("idle");
         this.playAnimationSmooth(this.IMAGES_IDLE, "idleIndex");
@@ -355,7 +393,7 @@ class Character extends MoveableObject {
    */
   startSleepAnimationLoop() {
     this.sleepAnimationInterval = setInterval(() => {
-      if (this.world.gameOver) {
+      if (this.world.gameOver || this.isDead()) {
         this.stopSnoring();
         return;
       }
@@ -406,7 +444,8 @@ class Character extends MoveableObject {
    */
   stopIntervals() {
     if (this.movementInterval) clearInterval(this.movementInterval);
-    if (this.actionAnimationInterval) clearInterval(this.actionAnimationInterval);
+    if (this.actionAnimationInterval)
+      clearInterval(this.actionAnimationInterval);
     if (this.idleAnimationInterval) clearInterval(this.idleAnimationInterval);
     if (this.sleepAnimationInterval) clearInterval(this.sleepAnimationInterval);
     if (this.gravityInterval) clearInterval(this.gravityInterval);

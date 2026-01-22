@@ -21,6 +21,7 @@ class World {
   gameIntervals = [];
   animationFrameId = null;
   endboss = null;
+  gameOverMusicPlayed = false;
 
   /**
    * Create the game world
@@ -157,9 +158,24 @@ class World {
       this.endbossStatusBar.setPercentage(enemy.energy);
       this.playEndbossHitSound();
       if (enemy.isDead) {
-        this.triggerWin();
+        this.waitForDeadAnimationThenWin(enemy);
       }
     }
+  }
+
+  /**
+   * Wait for endboss dead animation to finish, then trigger win
+   * @param {Endboss} enemy - The endboss
+   */
+  waitForDeadAnimationThenWin(enemy) {
+    let checkInterval = setInterval(() => {
+      if (enemy.deadAnimationFinished) {
+        clearInterval(checkInterval);
+        setTimeout(() => {
+          this.triggerWin();
+        }, 1000);
+      }
+    }, 100);
   }
 
   /**
@@ -186,11 +202,9 @@ class World {
   triggerWin() {
     if (this.gameOver) return;
     this.gameOver = true;
-    setTimeout(() => {
-      if (window.endGame) {
-        window.endGame("win");
-      }
-    }, 1000);
+    if (window.endGame) {
+      window.endGame("win");
+    }
   }
 
   /**
@@ -231,15 +245,27 @@ class World {
    * Check if game should end
    */
   checkGameOver() {
-    if (this.character.isDead() && !this.gameOver) {
-      this.gameOver = true;
-      // Trigger game over after death animation
-      setTimeout(() => {
+    if (this.character.isDead() && !this.gameOverMusicPlayed) {
+      // Mark that game over has been triggered
+      this.gameOverMusicPlayed = true;
+      // Don't set gameOver yet - wait for animation to finish
+      this.waitForCharacterDeadAnimation();
+    }
+  }
+
+  /**
+   * Wait for character dead animation to finish, then trigger game over
+   */
+  waitForCharacterDeadAnimation() {
+    let checkInterval = setInterval(() => {
+      if (this.character.deadAnimationFinished) {
+        clearInterval(checkInterval);
+        this.gameOver = true; // Set gameOver AFTER animation finishes
         if (window.endGame) {
           window.endGame("gameover");
         }
-      }, 500);
-    }
+      }
+    }, 100);
   }
 
   /**
@@ -488,7 +514,7 @@ class World {
     this.character.hit();
     this.statusBar.setPercentage(this.character.energy);
     this.startGracePeriod(1000);
-    if (window.AudioManager) {
+    if (window.AudioManager && this.character.energy > 0) {
       window.AudioManager.playSfx("hurt");
     }
   }

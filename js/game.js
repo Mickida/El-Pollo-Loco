@@ -174,11 +174,6 @@ function endGame(type) {
   if (gameEnded) return;
   gameEnded = true;
 
-  // Stop game loops
-  if (world) {
-    world.stopGame();
-  }
-
   // Play appropriate sound
   if (window.AudioManager) {
     window.AudioManager.stopMusic();
@@ -189,8 +184,11 @@ function endGame(type) {
     }
   }
 
-  // Show endscreen after short delay for death animation
+  // Show endscreen and stop game
   setTimeout(() => {
+    if (world) {
+      world.stopGame();
+    }
     if (window.UI && window.UI.showEndscreen) {
       window.UI.showEndscreen(type);
     }
@@ -387,3 +385,91 @@ function handleKeyUp(e) {
 
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
+
+/**
+ * Check if the device supports touch
+ * @returns {boolean} True if touch device
+ */
+function isTouchDevice() {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+}
+
+/**
+ * Initialize mobile controls with touch event listeners
+ */
+function initMobileControls() {
+  if (!isTouchDevice()) return;
+
+  bindMobileButton("mobile-left", "LEFT");
+  bindMobileButton("mobile-right", "RIGHT");
+  bindMobileButton("mobile-jump", "SPACE");
+  bindMobileButton("mobile-throw", "D");
+
+  disableContextMenuOnMobileButtons();
+}
+
+/**
+ * Bind a mobile button to a keyboard key
+ * @param {string} buttonId - The ID of the mobile button
+ * @param {string} keyboardKey - The keyboard key to simulate
+ */
+function bindMobileButton(buttonId, keyboardKey) {
+  let button = document.getElementById(buttonId);
+  if (!button) return;
+
+  button.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    keyboard[keyboardKey] = true;
+  });
+
+  button.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    keyboard[keyboardKey] = false;
+  });
+
+  button.addEventListener("touchcancel", (e) => {
+    e.preventDefault();
+    keyboard[keyboardKey] = false;
+  });
+}
+
+/**
+ * Disable context menu (long press) on all mobile buttons
+ */
+function disableContextMenuOnMobileButtons() {
+  let buttons = document.querySelectorAll(".mobile-btn");
+  buttons.forEach((button) => {
+    button.addEventListener("contextmenu", (e) => e.preventDefault());
+  });
+}
+
+/**
+ * Check if device is in portrait orientation
+ * @returns {boolean} True if portrait mode
+ */
+function isPortrait() {
+  return window.innerHeight > window.innerWidth;
+}
+
+/**
+ * Handle orientation changes - show/hide rotate message
+ */
+function handleOrientationChange() {
+  if (!isTouchDevice()) return;
+
+  let rotateOverlay = document.getElementById("rotate-device");
+  if (!rotateOverlay) return;
+
+  if (isPortrait()) {
+    rotateOverlay.classList.remove("hidden");
+  } else {
+    rotateOverlay.classList.add("hidden");
+  }
+}
+
+window.addEventListener("orientationchange", handleOrientationChange);
+window.addEventListener("resize", handleOrientationChange);
+document.addEventListener("DOMContentLoaded", () => {
+  initMobileControls();
+  handleOrientationChange();
+});

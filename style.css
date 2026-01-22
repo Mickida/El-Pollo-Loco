@@ -427,3 +427,253 @@ canvas {
 #mute-btn:hover {
   transform: scale(1.1);
 }
+
+/* ==================== Mobile Controls ==================== */
+.mobile-controls {
+  display: none;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.mobile-controls-left,
+.mobile-controls-right {
+  display: flex;
+  gap: 15px;
+  pointer-events: auto;
+}
+
+.mobile-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 165, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffd700;
+  font-family: "Boogaloo", cursive;
+  font-size: 1.5rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all 0.1s ease;
+}
+
+.mobile-btn:active {
+  background: rgba(255, 107, 53, 0.7);
+  transform: scale(0.95);
+}
+
+#mobile-jump,
+#mobile-throw {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* ==================== Rotate Device Overlay ==================== */
+.rotate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26, 26, 46, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.rotate-overlay.hidden {
+  display: none;
+}
+
+.rotate-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.rotate-icon {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 20px;
+  animation: rotatePhone 2s ease-in-out infinite;
+}
+
+@keyframes rotatePhone {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+}
+
+.rotate-content p {
+  color: #ffd700;
+  font-family: "Boogaloo", cursive;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== Mobile Media Query (min: 667x375) ==================== */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    min-height: 100dvh;
+    overflow: hidden;
+    background-color: black;
+  }
+
+  .landing-page {
+    height: 100dvh;
+  }
+
+  .landing-content {
+    padding: 15px 20px;
+    border-radius: 15px;
+  }
+
+  .game-title {
+    font-size: 1.6rem;
+    margin-bottom: 3px;
+  }
+
+  .game-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  .button-container {
+    gap: 6px;
+  }
+
+  .btn {
+    font-size: 0.85rem;
+    padding: 8px 20px;
+    min-width: 150px;
+    border-radius: 30px;
+  }
+
+  .btn span {
+    font-size: 1rem;
+  }
+
+  .mobile-controls {
+    display: flex;
+  }
+
+  .game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+  }
+
+  .game-container.hidden {
+    display: none;
+  }
+
+  canvas {
+    width: 100vw;
+    height: auto;
+    max-height: 100dvh;
+    aspect-ratio: 720 / 480;
+    border-radius: 0;
+  }
+
+  .game-controls {
+    top: 3px;
+    right: 3px;
+    gap: 5px;
+  }
+
+  .btn-small {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    min-width: 32px;
+  }
+
+  #mute-btn {
+    font-size: 0.8rem;
+    min-width: 32px;
+    padding: 4px 8px;
+  }
+
+  #fullscreen-game-btn,
+  #fullscreen-btn {
+    display: none;
+  }
+
+  .mobile-controls {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    padding: 0 15px;
+  }
+
+  .mobile-controls-left,
+  .mobile-controls-right {
+    gap: 10px;
+  }
+
+  .mobile-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.1rem;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  #mobile-jump,
+  #mobile-throw {
+    font-size: 0.75rem;
+  }
+
+  /* Endscreen Mobile Anpassungen */
+  .endscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    padding: 0;
+    margin: 0;
+  }
+
+  .endscreen-content {
+    padding: 12px 15px;
+    border-radius: 12px;
+    max-width: 85%;
+  }
+
+  .endscreen-image {
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+
+  .endscreen-buttons {
+    gap: 6px;
+  }
+
+  .endscreen-buttons .btn {
+    font-size: 0.8rem;
+    padding: 6px 16px;
+    min-width: 130px;
+    border-radius: 25px;
+  }
+
+  .endscreen-buttons .btn span {
+    font-size: 0.9rem;
+  }
+}

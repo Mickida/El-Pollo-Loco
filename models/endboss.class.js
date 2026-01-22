@@ -78,6 +78,8 @@ class Endboss extends MoveableObject {
   animateInterval;
   moveInterval;
   world = null;
+  deadAnimationFinished = false;
+  deadAnimationFrame = 0;
 
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
@@ -228,7 +230,8 @@ class Endboss extends MoveableObject {
    */
   playCurrentAnimation() {
     if (this.isDead) {
-      this.playAnimation(this.IMAGES_DEAD);
+      this.playDeadAnimation();
+      return;
     } else if (this.isHurt) {
       this.playAnimation(this.IMAGES_HURT);
     } else if (this.state === "attack") {
@@ -257,6 +260,25 @@ class Endboss extends MoveableObject {
    */
   playAttackAnimation() {
     this.playAnimation(this.IMAGES_ATTACK);
+  }
+
+  /**
+   * Play dead animation once then mark as finished
+   */
+  playDeadAnimation() {
+    console.log("playDeadAnimation called, frame:", this.deadAnimationFrame, "finished:", this.deadAnimationFinished);
+    if (this.deadAnimationFinished) {
+      this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
+      return;
+    }
+    if (this.deadAnimationFrame < this.IMAGES_DEAD.length) {
+      let path = this.IMAGES_DEAD[this.deadAnimationFrame];
+      this.img = this.imageCache[path];
+      this.deadAnimationFrame++;
+    } else {
+      this.deadAnimationFinished = true;
+      console.log("Dead animation finished!");
+    }
   }
 
   /**

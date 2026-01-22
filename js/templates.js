@@ -72,8 +72,18 @@ const Templates = {
       <div class="game-controls">
         <button id="mute-btn" class="btn btn-small" onclick="AudioManager.toggleMute(); this.blur();" title="Mute">🔊</button>
         <button class="btn btn-small" onclick="restartGame(); this.blur();" title="Restart">🔄</button>
-        <button class="btn btn-small" onclick="toggleFullscreen(); this.blur();" title="Fullscreen">⛶</button>
+        <button id="fullscreen-game-btn" class="btn btn-small" onclick="toggleFullscreen(); this.blur();" title="Fullscreen">⛶</button>
         <button class="btn btn-small" onclick="backToMenu(); this.blur();" title="Menu">☰</button>
+      </div>
+      <div class="mobile-controls">
+        <div class="mobile-controls-left">
+          <button class="mobile-btn" id="mobile-left">◀</button>
+          <button class="mobile-btn" id="mobile-right">▶</button>
+        </div>
+        <div class="mobile-controls-right">
+          <button class="mobile-btn" id="mobile-jump">JUMP</button>
+          <button class="mobile-btn" id="mobile-throw">THROW</button>
+        </div>
       </div>
     </div>
   `,
@@ -86,6 +96,15 @@ const Templates = {
           <button class="btn btn-primary" onclick="restartGame()"><span>🔄</span> Restart</button>
           <button class="btn btn-secondary" onclick="goToMainMenu()"><span>🏠</span> Home</button>
         </div>
+      </div>
+    </div>
+  `,
+
+  rotateOverlay: `
+    <div id="rotate-device" class="rotate-overlay hidden">
+      <div class="rotate-content">
+        <span class="rotate-icon">🔄</span>
+        <p>Please rotate your device to landscape mode</p>
       </div>
     </div>
   `,
