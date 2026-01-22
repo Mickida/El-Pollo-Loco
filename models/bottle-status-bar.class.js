@@ -1,3 +1,7 @@
+/**
+ * Status bar showing collected bottles
+ * @extends DrawableObject
+ */
 class BottleStatusBar extends DrawableObject {
   IMAGES = [
     "img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/0.png",

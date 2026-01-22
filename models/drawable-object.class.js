@@ -1,3 +1,6 @@
+/**
+ * Base class for all drawable game objects
+ */
 class DrawableObject {
   img;
   imageCache = [];
@@ -14,11 +17,19 @@ class DrawableObject {
   hitboxOffsetLeft = 0;
   hitboxOffsetRight = 0;
 
+  /**
+   * Load a single image
+   * @param {string} path - Path to the image file
+   */
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
   }
 
+  /**
+   * Load multiple images into the cache
+   * @param {string[]} arr - Array of image paths
+   */
   loadImages(arr) {
     arr.forEach((path) => {
       let img = new Image();
@@ -27,27 +38,19 @@ class DrawableObject {
     });
   }
 
+  /**
+   * Draw the object on the canvas
+   * @param {CanvasRenderingContext2D} ctx - The canvas context
+   */
   draw(ctx) {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
 
+  /**
+   * Draw debug frame around hitbox (disabled in production)
+   * @param {CanvasRenderingContext2D} ctx - The canvas context
+   */
   drawFrame(ctx) {
-    // Debug hitbox drawing - comment out for production
-    // if (
-    //   this instanceof Character ||
-    //   this instanceof Chicken ||
-    //   this instanceof Endboss
-    // ) {
-    //   ctx.beginPath();
-    //   ctx.lineWidth = 2;
-    //   ctx.strokeStyle = "blue";
-    //   ctx.rect(
-    //     this.x + this.hitboxOffsetLeft,
-    //     this.y + this.hitboxOffsetTop,
-    //     this.width - this.hitboxOffsetLeft - this.hitboxOffsetRight,
-    //     this.height - this.hitboxOffsetTop - this.hitboxOffsetBottom
-    //   );
-    //   ctx.stroke();
-    // }
+    // Debug hitbox drawing - uncomment for debugging
   }
 }

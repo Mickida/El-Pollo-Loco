@@ -1,3 +1,6 @@
+/**
+ * Main game world that manages all game objects and logic
+ */
 class World {
   character = new Character();
   level = level1;
@@ -10,20 +13,19 @@ class World {
   bottleStatusBar = new BottleStatusBar();
   endbossStatusBar = new EndbossStatusBar();
   throwableObjects = [];
-
-  // Collection tracking
   collectedCoins = 0;
   collectedBottles = 0;
-
-  // Game state
-  inGrace = false; // Grace period - no damage taken
+  inGrace = false;
   gameOver = false;
-  gameIntervals = []; // Store intervals for cleanup
+  gameIntervals = [];
   animationFrameId = null;
-
-  // Reference to endboss for status bar updates
   endboss = null;
 
+  /**
+   * Create the game world
+   * @param {HTMLCanvasElement} canvas - The game canvas
+   * @param {Keyboard} keyboard - The keyboard input handler
+   */
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -35,9 +37,18 @@ class World {
     this.run();
   }
 
+  /**
+   * Start the main game loops for collision detection and throwing
+   */
   run() {
-    // Store interval references for cleanup
-    // Fast collision check for responsive gameplay (60fps)
+    this.startCollisionLoop();
+    this.startThrowLoop();
+  }
+
+  /**
+   * Start collision detection loop at 60 FPS
+   */
+  startCollisionLoop() {
     let collisionInterval = setInterval(() => {
       if (!this.gameOver) {
         this.checkCollisions();
@@ -48,8 +59,12 @@ class World {
       }
     }, 1000 / 60);
     this.gameIntervals.push(collisionInterval);
+  }
 
-    // Slower interval for throw check to prevent spam
+  /**
+   * Start throw detection loop at 100ms intervals
+   */
+  startThrowLoop() {
     let throwInterval = setInterval(() => {
       if (!this.gameOver) {
         this.checkThrowObjects();
@@ -63,45 +78,87 @@ class World {
    */
   checkThrownBottleCollisions() {
     this.throwableObjects.forEach((bottle, bottleIndex) => {
-      // Skip if already hit
-      if (bottle.hasHit) {
-        // Remove bottle after splash animation completes
-        if (bottle.splashComplete) {
-          this.throwableObjects.splice(bottleIndex, 1);
-        }
-        return;
-      }
-
-      // Check ground collision
-      if (bottle.hasHitGround()) {
-        bottle.startSplash();
-        if (window.AudioManager) {
-          window.AudioManager.playSfx("splash");
-        }
-        return;
-      }
-
-      // Check enemy collision - bottles only damage the Endboss
-      this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy) && !bottle.hasHit && enemy instanceof Endboss) {
-          bottle.startSplash();
-
-          // Damage endboss
-          if (enemy.hit) {
-            enemy.hit();
-            this.endbossStatusBar.setPercentage(enemy.energy);
-            // Check if endboss is dead for win condition
-            if (enemy.isDead) {
-              this.triggerWin();
-            }
-          }
-
-          if (window.AudioManager) {
-            window.AudioManager.playSfx("splash");
-          }
-        }
-      });
+      if (this.handleBottleCleanup(bottle, bottleIndex)) return;
+      if (this.handleBottleGroundHit(bottle)) return;
+      this.handleBottleEnemyHit(bottle);
     });
+  }
+
+  /**
+   * Remove bottles that have completed splash animation
+   * @param {ThrowableObject} bottle - The bottle to check
+   * @param {number} bottleIndex - Index of the bottle in array
+   * @returns {boolean} True if bottle was cleaned up
+   */
+  handleBottleCleanup(bottle, bottleIndex) {
+    if (bottle.hasHit) {
+      if (bottle.splashComplete) {
+        this.throwableObjects.splice(bottleIndex, 1);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Handle bottle hitting the ground
+   * @param {ThrowableObject} bottle - The bottle to check
+   * @returns {boolean} True if bottle hit ground
+   */
+  handleBottleGroundHit(bottle) {
+    if (bottle.hasHitGround()) {
+      bottle.startSplash();
+      this.playSplashSound();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Handle bottle hitting an enemy (Endboss only)
+   * @param {ThrowableObject} bottle - The bottle to check
+   */
+  handleBottleEnemyHit(bottle) {
+    this.level.enemies.forEach((enemy) => {
+      if (this.isValidEndbossHit(bottle, enemy)) {
+        bottle.startSplash();
+        this.damageEndboss(enemy);
+        this.playSplashSound();
+      }
+    });
+  }
+
+  /**
+   * Check if bottle hit the endboss
+   * @param {ThrowableObject} bottle - The bottle
+   * @param {MoveableObject} enemy - The enemy to check
+   * @returns {boolean} True if valid endboss hit
+   */
+  isValidEndbossHit(bottle, enemy) {
+    return bottle.isColliding(enemy) && !bottle.hasHit && enemy instanceof Endboss;
+  }
+
+  /**
+   * Apply damage to the endboss and check win condition
+   * @param {Endboss} enemy - The endboss
+   */
+  damageEndboss(enemy) {
+    if (enemy.hit) {
+      enemy.hit();
+      this.endbossStatusBar.setPercentage(enemy.energy);
+      if (enemy.isDead) {
+        this.triggerWin();
+      }
+    }
+  }
+
+  /**
+   * Play splash sound effect
+   */
+  playSplashSound() {
+    if (window.AudioManager) {
+      window.AudioManager.playSfx("splash");
+    }
   }
 
   /**
@@ -190,74 +247,127 @@ class World {
     }
   }
 
+  /**
+   * Check if player wants to throw a bottle and handle the throw
+   */
   checkThrowObjects() {
     if (this.keyboard.D && this.collectedBottles > 0) {
-      // Determine throw position and direction based on character facing
-      let throwLeft = this.character.otherDirection;
-      let throwX = throwLeft ? this.character.x - 20 : this.character.x + 100;
-      let bottle = new ThrowableObject(
-        throwX,
-        this.character.y + 100,
-        throwLeft,
-      );
-      this.throwableObjects.push(bottle);
-      this.collectedBottles--;
-      this.bottleStatusBar.setPercentage(this.collectedBottles * 20);
-      this.keyboard.D = false; // Prevent multiple throws per key press
+      this.throwBottle();
+      this.keyboard.D = false;
     }
   }
 
+  /**
+   * Create and throw a bottle in the direction the character is facing
+   */
+  throwBottle() {
+    let throwLeft = this.character.otherDirection;
+    let throwX = throwLeft ? this.character.x - 20 : this.character.x + 100;
+    let bottle = new ThrowableObject(throwX, this.character.y + 100, throwLeft);
+    this.throwableObjects.push(bottle);
+    this.collectedBottles--;
+    this.bottleStatusBar.setPercentage(this.collectedBottles * 20);
+  }
+
+  /**
+   * Check collisions between character and enemies
+   */
   checkCollisions() {
     if (this.inGrace) return;
-
     this.level.enemies.forEach((enemy) => {
-      if (enemy.isDead) return;
-      if (!this.character.isColliding(enemy)) return;
-
-      let isChicken = enemy instanceof Chicken || enemy instanceof SmallChicken;
-
-      // Jump kill conditions:
-      // 1. Character is above ground (jumping/falling)
-      // 2. Character is moving downward (falling)
-      // 3. Character's bottom is above enemy's top third
-      let isAboveGround = this.character.isAboveGround();
-      let isFalling = this.character.speedY < 0;
-      let characterBottom = this.character.y + this.character.height - this.character.hitboxOffsetBottom;
-      let enemyTop = enemy.y + (enemy.hitboxOffsetTop || 0);
-      let enemyHeight = enemy.height - (enemy.hitboxOffsetTop || 0) - (enemy.hitboxOffsetBottom || 0);
-      let isAboveEnemy = characterBottom < enemyTop + enemyHeight * 0.6;
-
-      if (isChicken && isAboveGround && isFalling && isAboveEnemy) {
-        enemy.hit();
-        this.character.speedY = 15; // Bounce up
-        // Short grace period to prevent double-hit
-        this.inGrace = true;
-        setTimeout(() => {
-          this.inGrace = false;
-        }, 300);
-        if (window.AudioManager) {
-          window.AudioManager.playSfx("hit");
-        }
-      } else {
-        this.character.hit();
-        this.statusBar.setPercentage(this.character.energy);
-        // Grace period after taking damage
-        this.inGrace = true;
-        setTimeout(() => {
-          this.inGrace = false;
-        }, 1000);
-        if (window.AudioManager) {
-          window.AudioManager.playSfx("hurt");
-        }
-      }
+      if (enemy.isDead || !this.character.isColliding(enemy)) return;
+      this.handleEnemyCollision(enemy);
     });
   }
 
+  /**
+   * Handle collision with a specific enemy
+   * @param {MoveableObject} enemy - The enemy that was collided with
+   */
+  handleEnemyCollision(enemy) {
+    if (this.canJumpKill(enemy)) {
+      this.performJumpKill(enemy);
+    } else {
+      this.takeDamage();
+    }
+  }
+
+  /**
+   * Check if character can jump-kill this enemy
+   * @param {MoveableObject} enemy - The enemy to check
+   * @returns {boolean} True if jump kill conditions are met
+   */
+  canJumpKill(enemy) {
+    let isChicken = enemy instanceof Chicken || enemy instanceof SmallChicken;
+    let isAboveGround = this.character.isAboveGround();
+    let isFalling = this.character.speedY < 0;
+    let isAboveEnemy = this.isCharacterAboveEnemy(enemy);
+    return isChicken && isAboveGround && isFalling && isAboveEnemy;
+  }
+
+  /**
+   * Check if character is positioned above the enemy
+   * @param {MoveableObject} enemy - The enemy to check
+   * @returns {boolean} True if character is above enemy
+   */
+  isCharacterAboveEnemy(enemy) {
+    let charBottom = this.character.y + this.character.height - this.character.hitboxOffsetBottom;
+    let enemyTop = enemy.y + (enemy.hitboxOffsetTop || 0);
+    let enemyHeight = enemy.height - (enemy.hitboxOffsetTop || 0) - (enemy.hitboxOffsetBottom || 0);
+    return charBottom < enemyTop + enemyHeight * 0.6;
+  }
+
+  /**
+   * Execute jump kill on enemy
+   * @param {MoveableObject} enemy - The enemy to kill
+   */
+  performJumpKill(enemy) {
+    enemy.hit();
+    this.character.speedY = 15;
+    this.startGracePeriod(300);
+    if (window.AudioManager) {
+      window.AudioManager.playSfx("hit");
+    }
+  }
+
+  /**
+   * Apply damage to the character
+   */
+  takeDamage() {
+    this.character.hit();
+    this.statusBar.setPercentage(this.character.energy);
+    this.startGracePeriod(1000);
+    if (window.AudioManager) {
+      window.AudioManager.playSfx("hurt");
+    }
+  }
+
+  /**
+   * Start invincibility grace period
+   * @param {number} duration - Duration in milliseconds
+   */
+  startGracePeriod(duration) {
+    this.inGrace = true;
+    setTimeout(() => {
+      this.inGrace = false;
+    }, duration);
+  }
+
+  /**
+   * Main draw loop - renders all game objects
+   */
   draw() {
     if (this.gameOver) return;
-
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawWorldObjects();
+    this.drawFixedUI();
+    this.requestNextFrame();
+  }
 
+  /**
+   * Draw all objects that move with the camera
+   */
+  drawWorldObjects() {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addObjectsToMap(this.level.clouds);
@@ -266,50 +376,77 @@ class World {
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
     this.addObjectsToMap(this.throwableObjects);
+    this.drawEndbossStatusBar();
+    this.ctx.translate(-this.camera_x, 0);
+  }
 
-    // Draw endboss status bar above the endboss (moves with camera)
+  /**
+   * Draw endboss status bar above the endboss
+   */
+  drawEndbossStatusBar() {
     if (this.endboss) {
       this.endbossStatusBar.x = this.endboss.x + 25;
       this.endbossStatusBar.y = this.endboss.y - 10;
       this.addToMap(this.endbossStatusBar);
     }
+  }
 
-    this.ctx.translate(-this.camera_x, 0);
-    // Draw all status bars LAST (fixed position, always on top)
+  /**
+   * Draw fixed UI elements (status bars)
+   */
+  drawFixedUI() {
     this.addToMap(this.statusBar);
     this.addToMap(this.coinStatusBar);
     this.addToMap(this.bottleStatusBar);
+  }
 
+  /**
+   * Request next animation frame
+   */
+  requestNextFrame() {
     let self = this;
     this.animationFrameId = requestAnimationFrame(function () {
       self.draw();
     });
   }
 
+  /**
+   * Add multiple objects to the map
+   * @param {DrawableObject[]} objects - Array of objects to draw
+   */
   addObjectsToMap(objects) {
     objects.forEach((o) => {
       this.addToMap(o);
     });
   }
 
+  /**
+   * Add a single object to the map with flip handling
+   * @param {DrawableObject} mo - The object to draw
+   */
   addToMap(mo) {
     if (mo.otherDirection) {
       this.flipImage(mo);
     }
-
     mo.draw(this.ctx);
     mo.drawFrame(this.ctx);
-
     if (mo.otherDirection) {
       this.flipImageBack(mo);
     }
   }
 
+  /**
+   * Set the world reference on the character and start animations
+   */
   setWorld() {
     this.character.world = this;
     this.character.animate();
   }
 
+  /**
+   * Flip image horizontally for left-facing objects
+   * @param {DrawableObject} mo - The object to flip
+   */
   flipImage(mo) {
     this.ctx.save();
     this.ctx.translate(mo.width, 0);
@@ -317,6 +454,10 @@ class World {
     mo.x = mo.x * -1;
   }
 
+  /**
+   * Restore image after flipping
+   * @param {DrawableObject} mo - The object to restore
+   */
   flipImageBack(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();

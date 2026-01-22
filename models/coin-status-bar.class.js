@@ -1,3 +1,7 @@
+/**
+ * Status bar showing collected coins
+ * @extends DrawableObject
+ */
 class CoinStatusBar extends DrawableObject {
   IMAGES = [
     "img/7_statusbars/1_statusbar/1_statusbar_coin/green/0.png",

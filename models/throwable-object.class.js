@@ -1,3 +1,7 @@
+/**
+ * Throwable bottle object that can damage enemies
+ * @extends MoveableObject
+ */
 class ThrowableObject extends MoveableObject {
   IMAGES_ROTATION = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -21,8 +25,14 @@ class ThrowableObject extends MoveableObject {
   hasHit = false;
   throwInterval;
   animationInterval;
-  throwDirection = 1; // 1 = right, -1 = left
+  throwDirection = 1;
 
+  /**
+   * Create a throwable bottle
+   * @param {number} x - Starting x position
+   * @param {number} y - Starting y position
+   * @param {boolean} throwLeft - Whether to throw left
+   */
   constructor(x, y, throwLeft = false) {
     super();
     this.loadImage("img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png");
@@ -36,20 +46,35 @@ class ThrowableObject extends MoveableObject {
     this.throw(x, y);
   }
 
+  /**
+   * Start the throw motion with gravity and rotation
+   * @param {number} x - Starting x position
+   * @param {number} y - Starting y position
+   */
   throw(x, y) {
     this.speedY = 30;
     this.x = x;
     this.y = y;
     this.applyGravity();
+    this.startMovement();
+    this.startRotationAnimation();
+  }
 
-    // Movement interval - direction based on throwDirection
+  /**
+   * Start horizontal movement interval
+   */
+  startMovement() {
     this.throwInterval = setInterval(() => {
       if (!this.isSplashing) {
         this.x += 10 * this.throwDirection;
       }
     }, 25);
+  }
 
-    // Rotation animation interval (slower rotation)
+  /**
+   * Start rotation animation interval
+   */
+  startRotationAnimation() {
     this.animationInterval = setInterval(() => {
       if (!this.isSplashing) {
         this.playRotation();
@@ -79,26 +104,27 @@ class ThrowableObject extends MoveableObject {
    * Start splash animation when bottle hits something
    */
   startSplash() {
-    if (this.isSplashing) return; // Already splashing
-
+    if (this.isSplashing) return;
     this.isSplashing = true;
     this.hasHit = true;
-    this.speedY = 0; // Stop vertical movement
-
-    // Position splash at ground level (same as character)
+    this.speedY = 0;
     this.y = 350;
+    this.clearIntervals();
+    this.playSplashAnimation();
+  }
 
-    // Clear movement interval
-    if (this.throwInterval) {
-      clearInterval(this.throwInterval);
-    }
+  /**
+   * Clear all active intervals
+   */
+  clearIntervals() {
+    if (this.throwInterval) clearInterval(this.throwInterval);
+    if (this.animationInterval) clearInterval(this.animationInterval);
+  }
 
-    // Clear animation interval
-    if (this.animationInterval) {
-      clearInterval(this.animationInterval);
-    }
-
-    // Play splash animation
+  /**
+   * Play the splash animation sequence
+   */
+  playSplashAnimation() {
     let splashInterval = setInterval(() => {
       if (this.splashIndex < this.IMAGES_SPLASH.length) {
         let path = this.IMAGES_SPLASH[this.splashIndex];

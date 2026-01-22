@@ -1,3 +1,7 @@
+/**
+ * Status bar showing endboss health
+ * @extends DrawableObject
+ */
 class EndbossStatusBar extends DrawableObject {
   IMAGES = [
     "img/7_statusbars/2_statusbar_endboss/orange/orange0.png",

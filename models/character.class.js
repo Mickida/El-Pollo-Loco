@@ -1,3 +1,7 @@
+/**
+ * The main playable character (Pepe)
+ * @extends MoveableObject
+ */
 class Character extends MoveableObject {
   height = 280;
   y = 55;
@@ -179,113 +183,210 @@ class Character extends MoveableObject {
     }
   }
 
+  /**
+   * Start all animation loops for the character
+   */
   animate() {
-    // Movement interval - 60 FPS
+    this.startMovementLoop();
+    this.startActionAnimationLoop();
+    this.startIdleAnimationLoop();
+    this.startSleepAnimationLoop();
+  }
+
+  /**
+   * Handle character movement at 60 FPS
+   */
+  startMovementLoop() {
     setInterval(() => {
-      let isMoving = false;
-
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.otherDirection = false;
-        isMoving = true;
-        this.resetActivityTimer();
-      }
-
-      if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        isMoving = true;
-        this.resetActivityTimer();
-      }
-
-      // Play walk sound only when moving on ground
-      if (isMoving && !this.isAboveGround() && window.AudioManager) {
-        window.AudioManager.playSfx("walk");
-      }
-
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-        this.isJumping = true;
-        this.jumpIndex = 0; // Reset jump animation
-        this.resetActivityTimer();
-        // Play jump sound
-        if (window.AudioManager) {
-          window.AudioManager.playSfx("jump");
-        }
-      }
-
-      // Reset jump state when landing
-      if (!this.isAboveGround() && this.isJumping) {
-        this.isJumping = false;
-      }
-
+      let isMoving = this.handleMovementInput();
+      this.handleWalkSound(isMoving);
+      this.handleJumpInput();
+      this.updateJumpState();
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
+  }
 
-    // Animation interval - for action animations (walk, jump, hurt, dead)
+  /**
+   * Process left/right movement input
+   * @returns {boolean} True if character is moving
+   */
+  handleMovementInput() {
+    let isMoving = false;
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      this.moveRight();
+      this.otherDirection = false;
+      isMoving = true;
+      this.resetActivityTimer();
+    }
+    if (this.world.keyboard.LEFT && this.x > 0) {
+      this.moveLeft();
+      this.otherDirection = true;
+      isMoving = true;
+      this.resetActivityTimer();
+    }
+    return isMoving;
+  }
+
+  /**
+   * Play walk sound when moving on ground
+   * @param {boolean} isMoving - Whether the character is moving
+   */
+  handleWalkSound(isMoving) {
+    if (isMoving && !this.isAboveGround() && window.AudioManager) {
+      window.AudioManager.playSfx("walk");
+    }
+  }
+
+  /**
+   * Process jump input
+   */
+  handleJumpInput() {
+    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+      this.jump();
+      this.isJumping = true;
+      this.jumpIndex = 0;
+      this.resetActivityTimer();
+      if (window.AudioManager) {
+        window.AudioManager.playSfx("jump");
+      }
+    }
+  }
+
+  /**
+   * Reset jump state when landing
+   */
+  updateJumpState() {
+    if (!this.isAboveGround() && this.isJumping) {
+      this.isJumping = false;
+    }
+  }
+
+  /**
+   * Handle action animations (dead, hurt, jump, walk) at 80ms intervals
+   */
+  startActionAnimationLoop() {
     setInterval(() => {
       if (this.isDead()) {
-        this.switchAnimationState("dead");
-        this.playAnimationSmooth(this.IMAGES_DEAD, "deadIndex");
+        this.playDeadAnimation();
       } else if (this.isHurt()) {
-        this.switchAnimationState("hurt");
-        this.playAnimationSmooth(this.IMAGES_HURT, "hurtIndex");
-        this.resetActivityTimer();
+        this.playHurtAnimation();
       } else if (this.isAboveGround()) {
-        this.switchAnimationState("jump");
-        // Play jump animation once, then hold last frame
-        if (this.jumpIndex < this.IMAGES_JUMPING.length) {
-          this.playAnimationOnce(this.IMAGES_JUMPING, "jumpIndex");
-        }
+        this.playJumpAnimation();
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.switchAnimationState("walk");
-        this.playAnimationSmooth(this.IMAGES_WALKING, "walkIndex");
+        this.playWalkAnimation();
       }
     }, 80);
+  }
 
-    // Separate slower interval for idle animation (150ms per frame - more natural blinking)
+  /**
+   * Play death animation
+   */
+  playDeadAnimation() {
+    this.switchAnimationState("dead");
+    this.playAnimationSmooth(this.IMAGES_DEAD, "deadIndex");
+  }
+
+  /**
+   * Play hurt animation
+   */
+  playHurtAnimation() {
+    this.switchAnimationState("hurt");
+    this.playAnimationSmooth(this.IMAGES_HURT, "hurtIndex");
+    this.resetActivityTimer();
+  }
+
+  /**
+   * Play jump animation once
+   */
+  playJumpAnimation() {
+    this.switchAnimationState("jump");
+    if (this.jumpIndex < this.IMAGES_JUMPING.length) {
+      this.playAnimationOnce(this.IMAGES_JUMPING, "jumpIndex");
+    }
+  }
+
+  /**
+   * Play walk animation
+   */
+  playWalkAnimation() {
+    this.switchAnimationState("walk");
+    this.playAnimationSmooth(this.IMAGES_WALKING, "walkIndex");
+  }
+
+  /**
+   * Handle idle animation at 150ms intervals
+   */
+  startIdleAnimationLoop() {
     setInterval(() => {
-      if (
-        !this.isDead() &&
-        !this.isHurt() &&
-        !this.isAboveGround() &&
-        !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) &&
-        !this.isSleeping()
-      ) {
+      if (this.canPlayIdleAnimation()) {
         this.switchAnimationState("idle");
         this.playAnimationSmooth(this.IMAGES_IDLE, "idleIndex");
       }
     }, 150);
+  }
 
-    // Separate slower interval for sleep animation (200ms per frame)
+  /**
+   * Check if idle animation can be played
+   * @returns {boolean} True if character should play idle animation
+   */
+  canPlayIdleAnimation() {
+    return (
+      !this.isDead() &&
+      !this.isHurt() &&
+      !this.isAboveGround() &&
+      !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) &&
+      !this.isSleeping()
+    );
+  }
+
+  /**
+   * Handle sleep animation at 200ms intervals
+   */
+  startSleepAnimationLoop() {
     setInterval(() => {
-      // Stop snoring and skip if game is over
       if (this.world.gameOver) {
-        if (window.AudioManager) {
-          window.AudioManager.stopSnoring();
-        }
+        this.stopSnoring();
         return;
       }
-
-      if (
-        !this.isDead() &&
-        !this.isHurt() &&
-        !this.isAboveGround() &&
-        !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) &&
-        this.isSleeping()
-      ) {
-        this.switchAnimationState("sleep");
-        this.playAnimationSmooth(this.IMAGES_SLEEPING, "sleepIndex");
-        // Start snoring sound when sleeping
-        if (window.AudioManager) {
-          window.AudioManager.startSnoring();
-        }
+      if (this.canPlaySleepAnimation()) {
+        this.playSleepAnimation();
       } else {
-        // Stop snoring when not sleeping
-        if (window.AudioManager) {
-          window.AudioManager.stopSnoring();
-        }
+        this.stopSnoring();
       }
     }, 200);
+  }
+
+  /**
+   * Check if sleep animation can be played
+   * @returns {boolean} True if character should play sleep animation
+   */
+  canPlaySleepAnimation() {
+    return (
+      !this.isDead() &&
+      !this.isHurt() &&
+      !this.isAboveGround() &&
+      !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) &&
+      this.isSleeping()
+    );
+  }
+
+  /**
+   * Play sleep animation and start snoring
+   */
+  playSleepAnimation() {
+    this.switchAnimationState("sleep");
+    this.playAnimationSmooth(this.IMAGES_SLEEPING, "sleepIndex");
+    if (window.AudioManager) {
+      window.AudioManager.startSnoring();
+    }
+  }
+
+  /**
+   * Stop snoring sound
+   */
+  stopSnoring() {
+    if (window.AudioManager) {
+      window.AudioManager.stopSnoring();
+    }
   }
 }

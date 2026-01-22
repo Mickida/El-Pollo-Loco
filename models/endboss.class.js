@@ -1,3 +1,7 @@
+/**
+ * Final boss enemy - large chicken that takes 4 bottle hits to defeat
+ * @extends MoveableObject
+ */
 class Endboss extends MoveableObject {
   height = 320;
   width = 200;
@@ -67,16 +71,26 @@ class Endboss extends MoveableObject {
     this.animate();
   }
 
+  /**
+   * Start the animation loop for the endboss
+   */
   animate() {
     this.animateInterval = setInterval(() => {
-      if (this.isDead) {
-        this.playAnimation(this.IMAGES_DEAD);
-      } else if (this.isHurt) {
-        this.playAnimation(this.IMAGES_HURT);
-      } else {
-        this.playAnimation(this.IMAGES_ALERT);
-      }
+      this.playCurrentAnimation();
     }, 200);
+  }
+
+  /**
+   * Play the appropriate animation based on state
+   */
+  playCurrentAnimation() {
+    if (this.isDead) {
+      this.playAnimation(this.IMAGES_DEAD);
+    } else if (this.isHurt) {
+      this.playAnimation(this.IMAGES_HURT);
+    } else {
+      this.playAnimation(this.IMAGES_ALERT);
+    }
   }
 
   /**

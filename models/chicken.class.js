@@ -1,3 +1,7 @@
+/**
+ * Normal chicken enemy that walks left and can be killed
+ * @extends MoveableObject
+ */
 class Chicken extends MoveableObject {
   y = 370;
   height = 70;
@@ -36,13 +40,29 @@ class Chicken extends MoveableObject {
     this.animate();
   }
 
+  /**
+   * Start movement and animation loops
+   */
   animate() {
+    this.startMovementLoop();
+    this.startAnimationLoop();
+  }
+
+  /**
+   * Start the movement loop at 60 FPS
+   */
+  startMovementLoop() {
     this.moveInterval = setInterval(() => {
       if (!this.isDead) {
         this.moveLeft();
       }
     }, 1000 / 60);
+  }
 
+  /**
+   * Start the walking animation loop
+   */
+  startAnimationLoop() {
     this.animateInterval = setInterval(() => {
       if (!this.isDead) {
         this.playAnimation(this.IMAGES_WALKING);

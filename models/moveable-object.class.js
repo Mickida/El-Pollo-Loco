@@ -1,3 +1,7 @@
+/**
+ * Base class for all moveable game objects
+ * @extends DrawableObject
+ */
 class MoveableObject extends DrawableObject {
   speed = 0.15;
   otherDirection = false;
@@ -6,10 +10,16 @@ class MoveableObject extends DrawableObject {
   energy = 100;
   lastHit = 0;
 
+  /**
+   * Make the object jump by setting vertical speed
+   */
   jump() {
     this.speedY = 30;
   }
 
+  /**
+   * Apply gravity to the object at 25 FPS
+   */
   applyGravity() {
     setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
@@ -19,6 +29,10 @@ class MoveableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
+  /**
+   * Check if the object is above the ground
+   * @returns {boolean} True if above ground
+   */
   isAboveGround() {
     if (this instanceof ThrowableObject) {
       return true;
@@ -27,14 +41,24 @@ class MoveableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Move the object to the right
+   */
   moveRight() {
     this.x += this.speed;
   }
 
+  /**
+   * Move the object to the left
+   */
   moveLeft() {
     this.x -= this.speed;
   }
 
+  /**
+   * Play animation by cycling through images
+   * @param {string[]} images - Array of image paths
+   */
   playAnimation(images) {
     let i = this.currentImage % images.length;
     let path = images[i];
@@ -68,6 +92,9 @@ class MoveableObject extends DrawableObject {
     );
   }
 
+  /**
+   * Apply damage to the object (reduces energy by 5)
+   */
   hit() {
     this.energy -= 5;
     if (this.energy < 0) {
@@ -77,10 +104,18 @@ class MoveableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Check if the object is dead
+   * @returns {boolean} True if energy is 0
+   */
   isDead() {
     return this.energy == 0;
   }
 
+  /**
+   * Check if the object was recently hurt
+   * @returns {boolean} True if hurt within last second
+   */
   isHurt() {
     let timepassed = new Date().getTime() - this.lastHit;
     timepassed = timepassed / 1000;

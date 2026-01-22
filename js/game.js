@@ -254,55 +254,52 @@ function toggleFullscreen() {
 }
 
 /**
- * Keyboard event listener for closing dialogs with Escape key
+ * Handle keydown events for dialogs and game controls
+ * @param {KeyboardEvent} e - The keyboard event
  */
-window.addEventListener("keydown", (e) => {
-  // Close dialogs with Escape key
+function handleKeyDown(e) {
+  handleEscapeKey(e);
+  if (gameStarted) {
+    handleGameKeyDown(e);
+  }
+}
+
+/**
+ * Close dialogs when Escape key is pressed
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function handleEscapeKey(e) {
   if (e.keyCode == 27) {
     hideDialog("info-dialog");
     hideDialog("keybindings-dialog");
   }
+}
 
-  // Game controls (only when game is started)
-  if (!gameStarted) return;
+/**
+ * Handle game control keydown events
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function handleGameKeyDown(e) {
+  if (e.keyCode == 39) keyboard.RIGHT = true;
+  if (e.keyCode == 37) keyboard.LEFT = true;
+  if (e.keyCode == 38) keyboard.UP = true;
+  if (e.keyCode == 40) keyboard.DOWN = true;
+  if (e.keyCode == 32) keyboard.SPACE = true;
+  if (e.keyCode == 68) keyboard.D = true;
+}
 
-  if (e.keyCode == 39) {
-    keyboard.RIGHT = true;
-  }
-  if (e.keyCode == 37) {
-    keyboard.LEFT = true;
-  }
-  if (e.keyCode == 38) {
-    keyboard.UP = true;
-  }
-  if (e.keyCode == 40) {
-    keyboard.DOWN = true;
-  }
-  if (e.keyCode == 32) {
-    keyboard.SPACE = true;
-  }
-  if (e.keyCode == 68) {
-    keyboard.D = true;
-  }
-});
+/**
+ * Handle keyup events for game controls
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function handleKeyUp(e) {
+  if (e.keyCode == 39) keyboard.RIGHT = false;
+  if (e.keyCode == 37) keyboard.LEFT = false;
+  if (e.keyCode == 38) keyboard.UP = false;
+  if (e.keyCode == 40) keyboard.DOWN = false;
+  if (e.keyCode == 32) keyboard.SPACE = false;
+  if (e.keyCode == 68) keyboard.D = false;
+}
 
-window.addEventListener("keyup", (e) => {
-  if (e.keyCode == 39) {
-    keyboard.RIGHT = false;
-  }
-  if (e.keyCode == 37) {
-    keyboard.LEFT = false;
-  }
-  if (e.keyCode == 38) {
-    keyboard.UP = false;
-  }
-  if (e.keyCode == 40) {
-    keyboard.DOWN = false;
-  }
-  if (e.keyCode == 32) {
-    keyboard.SPACE = false;
-  }
-  if (e.keyCode == 68) {
-    keyboard.D = false;
-  }
-});
+window.addEventListener("keydown", handleKeyDown);
+window.addEventListener("keyup", handleKeyUp);

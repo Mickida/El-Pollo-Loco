@@ -1,3 +1,6 @@
+/**
+ * Keyboard state tracker for game controls
+ */
 class Keyboard {
   LEFT = false;
   RIGHT = false;
