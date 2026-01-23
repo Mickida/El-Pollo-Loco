@@ -23,8 +23,8 @@
   border-radius: 50%;
   border: 3px solid rgba(255, 165, 0, 0.6);
   background: rgba(0, 0, 0, 0.5);
-  color: #ffd700;
-  font-family: "Boogaloo", cursive;
+  color: var(--color-gold);
+  font-family: var(--font-primary);
   font-size: 1.5rem;
   cursor: pointer;
   touch-action: manipulation;
@@ -34,7 +34,7 @@
 }
 
 .mobile-btn:active {
-  background: rgba(255, 107, 53, 0.7);
+  background: var(--bg-primary-hover);
   transform: scale(0.95);
 }
 
@@ -84,8 +84,8 @@
 }
 
 .rotate-content p {
-  color: #ffd700;
-  font-family: "Boogaloo", cursive;
+  color: var(--color-gold);
+  font-family: var(--font-primary);
   font-size: 1.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }

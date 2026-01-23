@@ -5,7 +5,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--bg-overlay-light);
   display: none;
   justify-content: center;
   align-items: center;
@@ -17,17 +17,17 @@
 }
 
 .pause-dialog {
-  background: linear-gradient(145deg, #2d3436 0%, #1a1a2e 100%);
-  border-radius: 20px;
+  background: linear-gradient(145deg, var(--color-bg-card) 0%, var(--color-bg-dark) 100%);
+  border-radius: var(--radius-large);
   padding: 40px;
   text-align: center;
-  border: 2px solid rgba(255, 165, 0, 0.3);
-  box-shadow: 0 0 50px rgba(255, 107, 53, 0.3);
+  border: var(--border-accent);
+  box-shadow: var(--shadow-glow-orange-strong);
   animation: dialogSlideIn 0.3s ease;
 }
 
 .pause-dialog h2 {
-  color: #ff6b35;
+  color: var(--color-primary);
   font-size: 2.5rem;
   margin-bottom: 30px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -52,7 +52,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--bg-overlay-dark);
   display: none;
   justify-content: center;
   align-items: center;
@@ -65,16 +65,16 @@
 }
 
 .dialog {
-  background: linear-gradient(145deg, #2d3436 0%, #1a1a2e 100%);
-  border-radius: 20px;
+  background: linear-gradient(145deg, var(--color-bg-card) 0%, var(--color-bg-dark) 100%);
+  border-radius: var(--radius-large);
   padding: 30px;
   max-width: 500px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
-  border: 2px solid rgba(255, 165, 0, 0.3);
-  box-shadow: 0 0 50px rgba(255, 107, 53, 0.3);
+  border: var(--border-accent);
+  box-shadow: var(--shadow-glow-orange-strong);
   animation: dialogSlideIn 0.3s ease;
 }
 
@@ -93,9 +93,9 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background: rgba(255, 107, 53, 0.2);
+  background: var(--bg-primary-light);
   border: none;
-  color: #ff6b35;
+  color: var(--color-primary);
   font-size: 1.5rem;
   width: 40px;
   height: 40px;
@@ -105,13 +105,13 @@
 }
 
 .dialog-close:hover {
-  background: #ff6b35;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-white);
   transform: rotate(90deg);
 }
 
 .dialog h2 {
-  color: #ff6b35;
+  color: var(--color-primary);
   font-size: 2rem;
   margin-bottom: 20px;
   text-align: center;
@@ -119,12 +119,12 @@
 }
 
 .dialog-content {
-  color: #e0e0e0;
+  color: var(--color-text-light);
   line-height: 1.6;
 }
 
 .dialog-content h3 {
-  color: #ffd700;
+  color: var(--color-gold);
   margin: 20px 0 10px 0;
   font-size: 1.3rem;
 }
@@ -160,7 +160,7 @@
 }
 
 .keybindings-table tr {
-  border-bottom: 1px solid rgba(255, 165, 0, 0.2);
+  border-bottom: var(--border-table);
 }
 
 .keybindings-table td {
@@ -174,13 +174,13 @@
 }
 
 kbd {
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931a 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: var(--color-white);
   padding: 8px 15px;
-  border-radius: 8px;
-  font-family: "Boogaloo", cursive;
+  border-radius: var(--radius-small);
+  font-family: var(--font-primary);
   font-size: 1rem;
-  box-shadow: 0 3px 0 #b34700, 0 5px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 0 var(--color-primary-dark), 0 5px 10px rgba(0, 0, 0, 0.3);
   display: inline-block;
   min-width: 50px;
 }

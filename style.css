@@ -17,15 +17,36 @@
   --color-bg-dark: #1a1a2e;
   --color-bg-card: #2d3436;
   --color-bg-card-light: #636e72;
+  --color-bg-card-hover: #3d4446;
+  --color-bg-card-light-hover: #737e82;
   --color-text-light: #e0e0e0;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-primary-dark: #b34700;
 
   /* Shadows */
   --shadow-glow-orange: 0 0 40px rgba(255, 165, 0, 0.2);
+  --shadow-glow-orange-strong: 0 0 50px rgba(255, 107, 53, 0.3);
   --shadow-primary: 0 4px 15px rgba(255, 107, 53, 0.4);
+  --shadow-primary-hover: 0 6px 25px rgba(255, 107, 53, 0.6);
   --shadow-dark: 0 4px 15px rgba(0, 0, 0, 0.3);
+  --shadow-dark-hover: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --shadow-dark-strong: 0 0 30px rgba(0, 0, 0, 0.5);
 
   /* Borders */
   --border-accent: 2px solid rgba(255, 165, 0, 0.3);
+  --border-accent-strong: 2px solid rgba(255, 165, 0, 0.4);
+  --border-light: 1px solid rgba(255, 255, 255, 0.3);
+  --border-table: 1px solid rgba(255, 165, 0, 0.2);
+
+  /* Backgrounds */
+  --bg-overlay-light: rgba(0, 0, 0, 0.6);
+  --bg-overlay-medium: rgba(0, 0, 0, 0.7);
+  --bg-overlay-dark: rgba(0, 0, 0, 0.8);
+  --bg-overlay-darker: rgba(0, 0, 0, 0.85);
+  --bg-button-dark: rgba(0, 0, 0, 0.7);
+  --bg-primary-light: rgba(255, 107, 53, 0.2);
+  --bg-primary-hover: rgba(255, 107, 53, 0.8);
 
   /* Fonts */
   --font-primary: "Boogaloo", cursive;
@@ -50,8 +71,8 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  font-family: "Boogaloo", cursive;
-  background-color: #1a1a2e;
+  font-family: var(--font-primary);
+  background-color: var(--color-bg-dark);
 }
 
 /* ==================== Utility Classes ==================== */

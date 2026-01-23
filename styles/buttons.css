@@ -7,11 +7,11 @@
 }
 
 .btn {
-  font-family: "Boogaloo", cursive;
+  font-family: var(--font-primary);
   font-size: 1.3rem;
   padding: 15px 40px;
   border: none;
-  border-radius: 50px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -26,37 +26,37 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931a 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: var(--color-white);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
-  color: #ffd700;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-card-light) 100%);
+  color: var(--color-gold);
+  box-shadow: var(--shadow-dark);
 }
 
 .btn-secondary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  background: linear-gradient(135deg, #3d4446 0%, #737e82 100%);
+  box-shadow: var(--shadow-dark-hover);
+  background: linear-gradient(135deg, var(--color-bg-card-hover) 0%, var(--color-bg-card-light-hover) 100%);
 }
 
 .btn-small {
   font-size: 1rem;
   padding: 8px 15px;
   min-width: auto;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-button-dark);
+  color: var(--color-white);
+  border: var(--border-light);
 }
 
 .btn-small:hover {
-  background: rgba(255, 107, 53, 0.8);
+  background: var(--bg-primary-hover);
 }

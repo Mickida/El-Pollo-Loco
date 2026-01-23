@@ -34,25 +34,25 @@
 .landing-content {
   text-align: center;
   padding: 40px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 20px;
+  background: var(--bg-overlay-light);
+  border-radius: var(--radius-large);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 165, 0, 0.3);
-  box-shadow: 0 0 40px rgba(255, 165, 0, 0.2);
+  border: var(--border-accent);
+  box-shadow: var(--shadow-glow-orange);
 }
 
 .game-title {
   font-size: 4rem;
-  color: #ff6b35;
-  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
-    -1px 1px 0 #000, 0 0 20px rgba(255, 107, 53, 0.5);
+  color: var(--color-primary);
+  text-shadow: 3px 3px 0 var(--color-black), -1px -1px 0 var(--color-black), 1px -1px 0 var(--color-black),
+    -1px 1px 0 var(--color-black), 0 0 20px rgba(255, 107, 53, 0.5);
   margin-bottom: 10px;
   letter-spacing: 2px;
 }
 
 .game-subtitle {
   font-size: 1.5rem;
-  color: #ffd700;
+  color: var(--color-gold);
   margin-bottom: 40px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
