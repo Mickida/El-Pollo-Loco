@@ -1,0 +1,49 @@
+/* ==================== Game Container ==================== */
+.game-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-container.hidden {
+  display: none;
+}
+
+.game-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+canvas {
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== Fullscreen Adjustments ==================== */
+:fullscreen .landing-page,
+:-webkit-full-screen .landing-page {
+  border-radius: 0;
+}
+
+:fullscreen canvas,
+:-webkit-full-screen canvas {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+/* ==================== Mute Button Styling ==================== */
+#mute-btn {
+  font-size: 1.2rem;
+  min-width: 45px;
+  padding: 8px 12px;
+}
+
+#mute-btn:hover {
+  transform: scale(1.1);
+}

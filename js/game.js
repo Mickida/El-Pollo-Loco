@@ -215,11 +215,11 @@ function endGame(type) {
 }
 
 /**
- * Returns to the main menu (pauses game if running)
+ * Returns to the main menu (shows pause menu if game is running)
  */
 function backToMenu() {
   if (gameStarted && !gameEnded) {
-    pauseGame();
+    showPauseMenu();
   } else {
     goToMainMenu();
   }
@@ -263,6 +263,61 @@ function resumeGame() {
   if (window.AudioManager) {
     window.AudioManager.playMusic();
   }
+}
+
+/**
+ * Show the pause menu overlay with blurred game background
+ */
+function showPauseMenu() {
+  gamePaused = true;
+
+  if (world) {
+    world.pauseGame();
+  }
+
+  if (window.AudioManager) {
+    window.AudioManager.stopMusic();
+  }
+
+  document.getElementById("game-container").classList.add("game-paused");
+  document.getElementById("pause-dialog").classList.add("active");
+}
+
+/**
+ * Hide the pause menu and resume the game
+ */
+function hidePauseMenu() {
+  document.getElementById("pause-dialog").classList.remove("active");
+  document.getElementById("game-container").classList.remove("game-paused");
+
+  gamePaused = false;
+
+  if (world) {
+    world.resumeGame();
+  }
+
+  if (window.AudioManager) {
+    window.AudioManager.playMusic();
+  }
+}
+
+/**
+ * Restart the game from the pause menu
+ */
+function restartGameFromPause() {
+  document.getElementById("pause-dialog").classList.remove("active");
+  document.getElementById("game-container").classList.remove("game-paused");
+  restartGame();
+}
+
+/**
+ * Go to main menu from the pause menu
+ */
+function goToMainMenuFromPause() {
+  document.getElementById("pause-dialog").classList.remove("active");
+  document.getElementById("game-container").classList.remove("game-paused");
+  document.getElementById("game-container").classList.add("hidden");
+  goToMainMenu();
 }
 
 /**
@@ -373,6 +428,9 @@ function handleEscapeKey(e) {
   if (e.keyCode == 27) {
     hideDialog("info-dialog");
     hideDialog("keybindings-dialog");
+    if (gamePaused && document.getElementById("pause-dialog").classList.contains("active")) {
+      hidePauseMenu();
+    }
   }
 }
 

@@ -81,7 +81,6 @@ class Character extends MoveableObject {
 
   world;
   speed = 5;
-  walkSoundPlaying = false;
 
   // Separate animation indices for smooth animations
   idleIndex = 0;

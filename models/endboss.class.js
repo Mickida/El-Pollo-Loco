@@ -24,7 +24,6 @@ class Endboss extends MoveableObject {
   // Attack system
   lastAttackTime = 0;
   ATTACK_COOLDOWN = 2000;
-  ATTACK_DAMAGE = 20;
 
   // Animation tracking
   alertAnimationPlayed = false;
@@ -266,7 +265,6 @@ class Endboss extends MoveableObject {
    * Play dead animation once then mark as finished
    */
   playDeadAnimation() {
-    console.log("playDeadAnimation called, frame:", this.deadAnimationFrame, "finished:", this.deadAnimationFinished);
     if (this.deadAnimationFinished) {
       this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
       return;
@@ -277,7 +275,6 @@ class Endboss extends MoveableObject {
       this.deadAnimationFrame++;
     } else {
       this.deadAnimationFinished = true;
-      console.log("Dead animation finished!");
     }
   }
 

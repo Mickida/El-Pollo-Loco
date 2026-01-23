@@ -1,0 +1,252 @@
+/* ==================== Responsive Design ==================== */
+@media (max-width: 600px) {
+  .game-title {
+    font-size: 2.5rem;
+  }
+
+  .game-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    min-width: 220px;
+  }
+
+  .dialog {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .dialog h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==================== Mobile Media Query (min: 667x375) ==================== */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .landing-page {
+    height: 100dvh;
+    background-size: auto 100%;
+    background-position: left center;
+  }
+
+  .landing-content {
+    padding: clamp(12px, 3vw, 25px) clamp(15px, 4vw, 30px);
+    border-radius: clamp(10px, 2vw, 20px);
+  }
+
+  .game-title {
+    font-size: clamp(1.4rem, 5vw, 2.5rem);
+    margin-bottom: clamp(2px, 0.5vh, 8px);
+  }
+
+  .game-subtitle {
+    font-size: clamp(0.75rem, 2.5vw, 1.2rem);
+    margin-bottom: clamp(8px, 2vh, 20px);
+  }
+
+  .button-container {
+    gap: clamp(5px, 1.5vw, 12px);
+  }
+
+  .btn {
+    font-size: clamp(0.75rem, 2.5vw, 1.1rem);
+    padding: clamp(6px, 1.5vw, 12px) clamp(15px, 4vw, 30px);
+    min-width: clamp(120px, 35vw, 200px);
+    border-radius: 30px;
+  }
+
+  .btn span {
+    font-size: clamp(0.85rem, 2.5vw, 1.2rem);
+  }
+
+  .mobile-controls {
+    display: flex;
+  }
+
+  .game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-container.hidden {
+    display: none;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100vw;
+    max-height: 100dvh;
+    aspect-ratio: 720 / 480;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .game-controls {
+    top: 3px;
+    right: 3px;
+    gap: 5px;
+  }
+
+  .btn-small {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    min-width: 32px;
+  }
+
+  #mute-btn {
+    font-size: 0.8rem;
+    min-width: 32px;
+    padding: 4px 8px;
+  }
+
+  #fullscreen-game-btn,
+  #fullscreen-btn {
+    display: none;
+  }
+
+  .mobile-controls {
+    position: absolute;
+    bottom: clamp(8px, 3%, 25px);
+    left: 0;
+    right: 0;
+    padding: 0 clamp(15px, 4%, 40px);
+  }
+
+  .mobile-controls-left,
+  .mobile-controls-right {
+    gap: clamp(10px, 3vw, 25px);
+  }
+
+  .mobile-btn {
+    width: clamp(50px, 10vw, 90px);
+    height: clamp(50px, 10vw, 90px);
+    font-size: clamp(1rem, 2.5vw, 1.6rem);
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  #mobile-jump,
+  #mobile-throw {
+    font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+  }
+
+  /* Endscreen Mobile Anpassungen */
+  .endscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    padding: 0;
+    margin: 0;
+  }
+
+  .endscreen-content {
+    padding: clamp(10px, 3vw, 20px) clamp(12px, 3vw, 25px);
+    border-radius: clamp(8px, 2vw, 15px);
+    max-width: 85%;
+  }
+
+  .endscreen-image {
+    max-width: clamp(150px, 40vw, 280px);
+    max-height: clamp(100px, 25vh, 180px);
+    object-fit: contain;
+    margin-bottom: clamp(8px, 2vh, 20px);
+  }
+
+  .endscreen-buttons {
+    gap: clamp(5px, 1.5vw, 12px);
+  }
+
+  .endscreen-buttons .btn {
+    font-size: clamp(0.7rem, 2.5vw, 1rem);
+    padding: clamp(5px, 1.5vw, 10px) clamp(12px, 3vw, 25px);
+    min-width: clamp(110px, 30vw, 180px);
+    border-radius: 25px;
+  }
+
+  .endscreen-buttons .btn span {
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+  }
+}
+
+/* ==================== Tablet-spezifische Anpassungen ==================== */
+@media (hover: none) and (pointer: coarse) and (min-width: 768px) {
+  .landing-page {
+    background-size: cover;
+    background-position: center;
+  }
+
+  .game-controls {
+    top: 10px;
+    right: 10px;
+    gap: 10px;
+  }
+
+  .btn-small {
+    padding: 10px 16px;
+    font-size: 1.1rem;
+    min-width: 50px;
+  }
+
+  #mute-btn {
+    font-size: 1.2rem;
+    min-width: 50px;
+    padding: 10px 14px;
+  }
+
+  .mobile-btn {
+    width: clamp(70px, 8vw, 100px);
+    height: clamp(70px, 8vw, 100px);
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    border-width: 4px;
+  }
+
+  #mobile-jump,
+  #mobile-throw {
+    font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+  }
+
+  .mobile-controls {
+    bottom: clamp(15px, 4%, 40px);
+    padding: 0 clamp(30px, 5%, 60px);
+  }
+
+  .mobile-controls-left,
+  .mobile-controls-right {
+    gap: clamp(15px, 3%, 30px);
+  }
+}
+
+/* ==================== Small Mobile Landscape ==================== */
+@media (hover: none) and (pointer: coarse) and (max-height: 450px) and (orientation: landscape) {
+  .landing-page {
+    background-size: auto 100%;
+    background-position: 20% center;
+  }
+}
+
+/* ==================== Very Small Mobile ==================== */
+@media (hover: none) and (pointer: coarse) and (max-width: 480px) {
+  .landing-page {
+    background-size: auto 100%;
+    background-position: 15% center;
+  }
+}

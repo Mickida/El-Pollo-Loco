@@ -66,6 +66,19 @@ const Templates = {
     </div>
   `,
 
+  pauseDialog: `
+    <div id="pause-dialog" class="pause-dialog-overlay" onclick="closeDialogOnBackdrop(event, 'pause-dialog')">
+      <div class="pause-dialog">
+        <h2>Paused</h2>
+        <div class="button-container">
+          <button class="btn btn-primary" onclick="hidePauseMenu()"><span>▶</span> Resume Game</button>
+          <button class="btn btn-secondary" onclick="restartGameFromPause()"><span>🔄</span> Restart Game</button>
+          <button class="btn btn-secondary" onclick="goToMainMenuFromPause()"><span>🏠</span> Main Menu</button>
+        </div>
+      </div>
+    </div>
+  `,
+
   gameContainer: `
     <div id="game-container" class="game-container hidden">
       <div class="canvas-wrapper">
