@@ -68,21 +68,23 @@ const Templates = {
 
   gameContainer: `
     <div id="game-container" class="game-container hidden">
-      <canvas id="canvas" width="720" height="480"></canvas>
-      <div class="game-controls">
-        <button id="mute-btn" class="btn btn-small" onclick="AudioManager.toggleMute(); this.blur();" title="Mute">🔊</button>
-        <button class="btn btn-small" onclick="restartGame(); this.blur();" title="Restart">🔄</button>
-        <button id="fullscreen-game-btn" class="btn btn-small" onclick="toggleFullscreen(); this.blur();" title="Fullscreen">⛶</button>
-        <button class="btn btn-small" onclick="backToMenu(); this.blur();" title="Menu">☰</button>
-      </div>
-      <div class="mobile-controls">
-        <div class="mobile-controls-left">
-          <button class="mobile-btn" id="mobile-left">◀</button>
-          <button class="mobile-btn" id="mobile-right">▶</button>
+      <div class="canvas-wrapper">
+        <canvas id="canvas" width="720" height="480"></canvas>
+        <div class="game-controls">
+          <button id="mute-btn" class="btn btn-small" onclick="AudioManager.toggleMute(); this.blur();" title="Mute">🔊</button>
+          <button class="btn btn-small" onclick="restartGame(); this.blur();" title="Restart">🔄</button>
+          <button id="fullscreen-game-btn" class="btn btn-small" onclick="toggleFullscreen(); this.blur();" title="Fullscreen">⛶</button>
+          <button class="btn btn-small" onclick="backToMenu(); this.blur();" title="Menu">☰</button>
         </div>
-        <div class="mobile-controls-right">
-          <button class="mobile-btn" id="mobile-jump">JUMP</button>
-          <button class="mobile-btn" id="mobile-throw">THROW</button>
+        <div class="mobile-controls">
+          <div class="mobile-controls-left">
+            <button class="mobile-btn" id="mobile-left">◀</button>
+            <button class="mobile-btn" id="mobile-right">▶</button>
+          </div>
+          <div class="mobile-controls-right">
+            <button class="mobile-btn" id="mobile-jump">JUMP</button>
+            <button class="mobile-btn" id="mobile-throw">THROW</button>
+          </div>
         </div>
       </div>
     </div>

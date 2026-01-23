@@ -48,11 +48,14 @@ class Character extends MoveableObject {
     "img/2_character_pepe/2_walk/W-26.png",
   ];
 
-  IMAGES_JUMPING = [
+  IMAGES_JUMPING_UP = [
     "img/2_character_pepe/3_jump/J-31.png",
     "img/2_character_pepe/3_jump/J-32.png",
     "img/2_character_pepe/3_jump/J-33.png",
     "img/2_character_pepe/3_jump/J-34.png",
+  ];
+
+  IMAGES_JUMPING_DOWN = [
     "img/2_character_pepe/3_jump/J-35.png",
     "img/2_character_pepe/3_jump/J-36.png",
     "img/2_character_pepe/3_jump/J-37.png",
@@ -84,7 +87,8 @@ class Character extends MoveableObject {
   idleIndex = 0;
   sleepIndex = 0;
   walkIndex = 0;
-  jumpIndex = 0;
+  jumpUpIndex = 0;
+  jumpDownIndex = 0;
   hurtIndex = 0;
   deadIndex = 0;
 
@@ -114,7 +118,8 @@ class Character extends MoveableObject {
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_SLEEPING);
     this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_JUMPING);
+    this.loadImages(this.IMAGES_JUMPING_UP);
+    this.loadImages(this.IMAGES_JUMPING_DOWN);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.applyGravity();
@@ -182,8 +187,11 @@ class Character extends MoveableObject {
         case "walk":
           this.walkIndex = 0;
           break;
-        case "jump":
-          this.jumpIndex = 0;
+        case "jumpUp":
+          this.jumpUpIndex = 0;
+          break;
+        case "jumpDown":
+          this.jumpDownIndex = 0;
           break;
         case "hurt":
           this.hurtIndex = 0;
@@ -343,12 +351,15 @@ class Character extends MoveableObject {
   }
 
   /**
-   * Play jump animation once
+   * Play jump animation - rising animation while going up, falling while going down
    */
   playJumpAnimation() {
-    this.switchAnimationState("jump");
-    if (this.jumpIndex < this.IMAGES_JUMPING.length) {
-      this.playAnimationOnce(this.IMAGES_JUMPING, "jumpIndex");
+    if (this.speedY > 0) {
+      this.switchAnimationState("jumpUp");
+      this.playAnimationSmooth(this.IMAGES_JUMPING_UP, "jumpUpIndex");
+    } else {
+      this.switchAnimationState("jumpDown");
+      this.playAnimationSmooth(this.IMAGES_JUMPING_DOWN, "jumpDownIndex");
     }
   }
 

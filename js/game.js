@@ -4,6 +4,7 @@ let keyboard = new Keyboard();
 let gameStarted = false;
 let gameEnded = false;
 let gamePaused = false;
+let pausedForPortrait = false;
 
 /**
  * Initializes the game when called (after clicking Start)
@@ -20,6 +21,7 @@ function startGame() {
   if (gameStarted) return;
   gameStarted = true;
   gameEnded = false;
+  pausedForPortrait = false;
 
   document.getElementById("landing-page").classList.add("hidden");
   document.getElementById("game-container").classList.remove("hidden");
@@ -33,10 +35,22 @@ function startGame() {
   if (window.AudioManager) {
     window.AudioManager.init();
     window.AudioManager.updateMuteButton();
-    window.AudioManager.playMusic();
   }
 
   init();
+
+  // If on touch device in portrait mode, pause immediately
+  if (isTouchDevice() && isPortrait()) {
+    pausedForPortrait = true;
+    if (world) {
+      world.pauseGame();
+    }
+  } else {
+    // Only play music if not in portrait mode
+    if (window.AudioManager) {
+      window.AudioManager.playMusic();
+    }
+  }
 }
 
 /**
@@ -46,6 +60,11 @@ function restartGame() {
   // Stop current game
   if (world) {
     world.stopGame();
+  }
+
+  // Reset audio to default state (unmuted)
+  if (window.AudioManager) {
+    window.AudioManager.reset();
   }
 
   // Reset state
@@ -452,7 +471,7 @@ function isPortrait() {
 }
 
 /**
- * Handle orientation changes - show/hide rotate message
+ * Handle orientation changes - show/hide rotate message and pause/resume game
  */
 function handleOrientationChange() {
   if (!isTouchDevice()) return;
@@ -462,8 +481,40 @@ function handleOrientationChange() {
 
   if (isPortrait()) {
     rotateOverlay.classList.remove("hidden");
+    pauseGameForPortrait();
   } else {
     rotateOverlay.classList.add("hidden");
+    resumeGameFromPortrait();
+  }
+}
+
+/**
+ * Pause the game when device is in portrait mode
+ */
+function pauseGameForPortrait() {
+  if (!gameStarted || gameEnded || gamePaused) return;
+
+  pausedForPortrait = true;
+  if (world) {
+    world.pauseGame();
+  }
+  if (window.AudioManager) {
+    window.AudioManager.stopMusic();
+  }
+}
+
+/**
+ * Resume the game when device switches to landscape mode
+ */
+function resumeGameFromPortrait() {
+  if (!pausedForPortrait || gameEnded) return;
+
+  pausedForPortrait = false;
+  if (world && world.gamePaused) {
+    world.resumeGame();
+    if (window.AudioManager) {
+      window.AudioManager.playMusic();
+    }
   }
 }
 

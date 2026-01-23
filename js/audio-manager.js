@@ -262,6 +262,19 @@ const AudioManager = {
   isMuted() {
     return this.muted;
   },
+
+  /**
+   * Reset audio manager to default state (for game restart)
+   * Does not read from localStorage - always starts unmuted
+   */
+  reset() {
+    this.stopAll();
+    this.muted = false;
+    this.initialized = false;
+    this.isSnoring = false;
+    this.lastPlayTime = {};
+    localStorage.removeItem(this.STORAGE_KEY);
+  },
 };
 
 // Expose to global scope
