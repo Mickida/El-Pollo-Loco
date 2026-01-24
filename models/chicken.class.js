@@ -7,7 +7,6 @@ class Chicken extends MoveableObject {
   height = 70;
   width = 70;
 
-  // Hitbox offsets for realistic collision
   hitboxOffsetTop = 5;
   hitboxOffsetBottom = 5;
   hitboxOffsetLeft = 5;
@@ -23,7 +22,7 @@ class Chicken extends MoveableObject {
 
   isDead = false;
   maxHealth = 2;
-  health = 2; // Normal chickens take 2 hits to kill
+  health = 2;
   moveInterval;
   animateInterval;
 
@@ -78,20 +77,18 @@ class Chicken extends MoveableObject {
     if (this.isDead) return;
     this.health--;
     if (this.health <= 0) {
-      this.isDead = true;
-      this.loadImage(this.IMAGES_DEAD[0]);
-      // Play death sound
-      if (window.AudioManager) {
-        window.AudioManager.playSfx("chickenDead");
-      }
-      // Stop movement
-      if (this.moveInterval) {
-        clearInterval(this.moveInterval);
-      }
-      if (this.animateInterval) {
-        clearInterval(this.animateInterval);
-      }
+      this.die();
     }
+  }
+
+  /**
+   * Handle chicken death
+   */
+  die() {
+    this.isDead = true;
+    this.loadImage(this.IMAGES_DEAD[0]);
+    playSoundEffect("chickenDead");
+    this.stopIntervals();
   }
 
   /**
@@ -100,10 +97,17 @@ class Chicken extends MoveableObject {
    */
   draw(ctx) {
     super.draw(ctx);
-    // Only show health bar if damaged and not dead
-    if (this.health < this.maxHealth && !this.isDead) {
+    if (this.shouldShowHealthBar()) {
       this.drawHealthBar(ctx);
     }
+  }
+
+  /**
+   * Check if health bar should be displayed
+   * @returns {boolean} True if health bar should show
+   */
+  shouldShowHealthBar() {
+    return this.health < this.maxHealth && !this.isDead;
   }
 
   /**
@@ -116,19 +120,50 @@ class Chicken extends MoveableObject {
     let barX = this.x + (this.width - barWidth) / 2;
     let barY = this.y - 10;
     let healthPercent = this.health / this.maxHealth;
+    this.drawHealthBarBackground(ctx, barX, barY, barWidth, barHeight);
+    this.drawHealthBarFill(ctx, barX, barY, barWidth, barHeight, healthPercent);
+    this.drawHealthBarBorder(ctx, barX, barY, barWidth, barHeight);
+  }
 
-    // Background (red)
+  /**
+   * Draw health bar background
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} x - X position
+   * @param {number} y - Y position
+   * @param {number} width - Bar width
+   * @param {number} height - Bar height
+   */
+  drawHealthBarBackground(ctx, x, y, width, height) {
     ctx.fillStyle = "red";
-    ctx.fillRect(barX, barY, barWidth, barHeight);
+    ctx.fillRect(x, y, width, height);
+  }
 
-    // Health (green)
+  /**
+   * Draw health bar fill
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} x - X position
+   * @param {number} y - Y position
+   * @param {number} width - Bar width
+   * @param {number} height - Bar height
+   * @param {number} percent - Health percentage
+   */
+  drawHealthBarFill(ctx, x, y, width, height, percent) {
     ctx.fillStyle = "lime";
-    ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
+    ctx.fillRect(x, y, width * percent, height);
+  }
 
-    // Border
+  /**
+   * Draw health bar border
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} x - X position
+   * @param {number} y - Y position
+   * @param {number} width - Bar width
+   * @param {number} height - Bar height
+   */
+  drawHealthBarBorder(ctx, x, y, width, height) {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
-    ctx.strokeRect(barX, barY, barWidth, barHeight);
+    ctx.strokeRect(x, y, width, height);
   }
 
   /**

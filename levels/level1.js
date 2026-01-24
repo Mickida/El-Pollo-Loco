@@ -61,7 +61,6 @@ let level1 = new Level(
       720 * 3,
     ),
   ],
-  // Coins - 5 coins at different positions (each worth 20%)
   [
     new Coin(350, 280),
     new Coin(600, 200),
@@ -69,7 +68,6 @@ let level1 = new Level(
     new Coin(1200, 250),
     new Coin(1600, 180),
   ],
-  // Bottles - 5 bottles on ground at different positions (each worth 20%)
   [
     new CollectibleBottle(450, 350),
     new CollectibleBottle(750, 350),

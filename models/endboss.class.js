@@ -7,25 +7,20 @@ class Endboss extends MoveableObject {
   width = 200;
   y = 125;
 
-  // Hitbox offsets for realistic collision (excludes status bar and empty space above)
   hitboxOffsetTop = 90;
   hitboxOffsetBottom = 16;
   hitboxOffsetLeft = 30;
   hitboxOffsetRight = 20;
 
-  // State machine
   state = "idle";
   speed = 0.5;
 
-  // Range constants
   ALERT_RANGE = 500;
   ATTACK_RANGE = 150;
 
-  // Attack system
   lastAttackTime = 0;
   ATTACK_COOLDOWN = 2000;
 
-  // Animation tracking
   alertAnimationPlayed = false;
   currentAnimationFrame = 0;
 
@@ -280,24 +275,33 @@ class Endboss extends MoveableObject {
 
   /**
    * Called when endboss is hit by a bottle
-   * Reduces energy by 25 (4 hits to kill)
    */
   hit() {
     if (this.isDead) return;
     this.energy -= 25;
     if (this.energy <= 0) {
-      this.energy = 0;
-      this.isDead = true;
-      this.state = "dead";
+      this.handleDeath();
     } else {
-      this.isHurt = true;
-      if (this.hurtTimeout) {
-        clearTimeout(this.hurtTimeout);
-      }
-      this.hurtTimeout = setTimeout(() => {
-        this.isHurt = false;
-      }, 500);
+      this.handleHurt();
     }
+  }
+
+  /**
+   * Handle endboss death
+   */
+  handleDeath() {
+    this.energy = 0;
+    this.isDead = true;
+    this.state = "dead";
+  }
+
+  /**
+   * Handle endboss hurt state
+   */
+  handleHurt() {
+    this.isHurt = true;
+    if (this.hurtTimeout) clearTimeout(this.hurtTimeout);
+    this.hurtTimeout = setTimeout(() => (this.isHurt = false), 500);
   }
 
   /**

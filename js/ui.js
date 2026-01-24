@@ -1,11 +1,22 @@
-/* UI renderer that injects templates into the page and keeps project structure intact */
+/**
+ * UI renderer that injects templates into the page
+ */
 (function () {
+  /**
+   * Render all UI templates into the root element
+   */
   function renderAll() {
     const root = document.getElementById("ui-root");
     if (!root) return;
-
     root.innerHTML = "";
-    // Insert landing + dialogs + game container + endscreen
+    insertAllTemplates(root);
+  }
+
+  /**
+   * Insert all templates into the root element
+   * @param {HTMLElement} root - The root element
+   */
+  function insertAllTemplates(root) {
     root.insertAdjacentHTML("beforeend", window.Templates.landing);
     root.insertAdjacentHTML("beforeend", window.Templates.infoDialog);
     root.insertAdjacentHTML("beforeend", window.Templates.keybindingsDialog);
@@ -23,19 +34,24 @@
   function showEndscreen(type) {
     const endscreen = document.getElementById("endscreen");
     const endscreenImg = document.getElementById("endscreen-image");
-
     if (!endscreen || !endscreenImg) return;
-
-    // Set the appropriate image based on game outcome
-    if (type === "win") {
-      endscreenImg.src = "img/You won, you lost/You won A.png";
-      endscreenImg.alt = "You Won!";
-    } else {
-      endscreenImg.src = "img/You won, you lost/Game Over.png";
-      endscreenImg.alt = "Game Over";
-    }
-
+    setEndscreenImage(endscreenImg, type);
     endscreen.classList.remove("hidden");
+  }
+
+  /**
+   * Set the endscreen image based on type
+   * @param {HTMLImageElement} img - The image element
+   * @param {string} type - 'gameover' or 'win'
+   */
+  function setEndscreenImage(img, type) {
+    if (type === "win") {
+      img.src = "img/You won, you lost/You won A.png";
+      img.alt = "You Won!";
+    } else {
+      img.src = "img/You won, you lost/Game Over.png";
+      img.alt = "Game Over";
+    }
   }
 
   /**
@@ -43,22 +59,29 @@
    */
   function hideEndscreen() {
     const endscreen = document.getElementById("endscreen");
-    if (endscreen) {
-      endscreen.classList.add("hidden");
-    }
+    if (endscreen) endscreen.classList.add("hidden");
   }
 
-  // Render as soon as DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
+  /**
+   * Initialize UI on DOM ready
+   */
+  function initializeUI() {
     renderAll();
-    // Initialize AudioManager and update mute button state
+    initializeAudio();
+  }
+
+  /**
+   * Initialize audio manager
+   */
+  function initializeAudio() {
     if (window.AudioManager) {
       window.AudioManager.init();
       window.AudioManager.updateMuteButton();
     }
-  });
+  }
 
-  // Expose helpers for tests or manual re-render
+  document.addEventListener("DOMContentLoaded", initializeUI);
+
   window.UI = {
     renderAll,
     showEndscreen,

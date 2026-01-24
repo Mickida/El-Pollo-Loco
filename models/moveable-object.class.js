@@ -69,29 +69,51 @@ class MoveableObject extends DrawableObject {
   }
 
   /**
-   * Check collision using hitbox offsets for more accurate detection
+   * Check collision using hitbox offsets
    * @param {MoveableObject} mo - The object to check collision with
-   * @returns {boolean} - True if objects are colliding
+   * @returns {boolean} True if objects are colliding
    */
   isColliding(mo) {
-    // Calculate actual hitbox bounds for this object
-    let thisLeft = this.x + this.hitboxOffsetLeft;
-    let thisRight = this.x + this.width - this.hitboxOffsetRight;
-    let thisTop = this.y + this.hitboxOffsetTop;
-    let thisBottom = this.y + this.height - this.hitboxOffsetBottom;
+    let thisBounds = this.getHitboxBounds();
+    let moBounds = this.getOtherHitboxBounds(mo);
+    return this.boundsOverlap(thisBounds, moBounds);
+  }
 
-    // Calculate actual hitbox bounds for the other object
-    let moLeft = mo.x + mo.hitboxOffsetLeft;
-    let moRight = mo.x + mo.width - mo.hitboxOffsetRight;
-    let moTop = mo.y + mo.hitboxOffsetTop;
-    let moBottom = mo.y + mo.height - mo.hitboxOffsetBottom;
+  /**
+   * Get hitbox bounds for this object
+   * @returns {Object} Bounds object with left, right, top, bottom
+   */
+  getHitboxBounds() {
+    return {
+      left: this.x + this.hitboxOffsetLeft,
+      right: this.x + this.width - this.hitboxOffsetRight,
+      top: this.y + this.hitboxOffsetTop,
+      bottom: this.y + this.height - this.hitboxOffsetBottom
+    };
+  }
 
-    return (
-      thisRight > moLeft &&
-      thisLeft < moRight &&
-      thisBottom > moTop &&
-      thisTop < moBottom
-    );
+  /**
+   * Get hitbox bounds for another object
+   * @param {MoveableObject} mo - The other object
+   * @returns {Object} Bounds object
+   */
+  getOtherHitboxBounds(mo) {
+    return {
+      left: mo.x + mo.hitboxOffsetLeft,
+      right: mo.x + mo.width - mo.hitboxOffsetRight,
+      top: mo.y + mo.hitboxOffsetTop,
+      bottom: mo.y + mo.height - mo.hitboxOffsetBottom
+    };
+  }
+
+  /**
+   * Check if two bounds objects overlap
+   * @param {Object} a - First bounds
+   * @param {Object} b - Second bounds
+   * @returns {boolean} True if overlapping
+   */
+  boundsOverlap(a, b) {
+    return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
   }
 
   /**

@@ -1,4 +1,7 @@
-/* Templates for UI rendering */
+/**
+ * Templates for UI rendering
+ * Contains all HTML templates for the game UI
+ */
 const Templates = {
   landing: `
     <div id="landing-page" class="landing-page">
@@ -158,5 +161,4 @@ const Templates = {
   `,
 };
 
-// Expose Templates to global scope for simplicity (no bundler)
 window.Templates = Templates;

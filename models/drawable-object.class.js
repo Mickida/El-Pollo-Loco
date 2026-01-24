@@ -10,8 +10,6 @@ class DrawableObject {
   height = 150;
   width = 100;
 
-  // Hitbox offset for more accurate collision detection
-  // These values shrink the hitbox from each side
   hitboxOffsetTop = 0;
   hitboxOffsetBottom = 0;
   hitboxOffsetLeft = 0;
@@ -51,6 +49,5 @@ class DrawableObject {
    * @param {CanvasRenderingContext2D} ctx - The canvas context
    */
   drawFrame(ctx) {
-    // Debug hitbox drawing - uncomment for debugging
   }
 }

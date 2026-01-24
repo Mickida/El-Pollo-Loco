@@ -3,10 +3,8 @@
  * Handles background music, sound effects, and mute state persistence
  */
 const AudioManager = {
-  // Storage key for mute state
   STORAGE_KEY: "elpollo_mute",
 
-  // Audio instances
   sounds: {
     music: null,
     walk: null,
@@ -22,29 +20,39 @@ const AudioManager = {
     endbossHit: null,
   },
 
-  // State
   muted: false,
   initialized: false,
-
-  // Rate limiting for SFX (prevent spam)
   lastPlayTime: {},
-  minInterval: 200, // ms between same sound plays
+  minInterval: 200,
+  isSnoring: false,
+  _walkIndex: 0,
 
   /**
    * Initialize audio manager and load all sounds
    */
   init() {
     if (this.initialized) return;
-
-    // Load mute state from localStorage
     this.muted = localStorage.getItem(this.STORAGE_KEY) === "true";
+    this.initMusic();
+    this.initWalkSounds();
+    this.initSoundEffects();
+    this.applyMuteState();
+    this.initialized = true;
+  },
 
-    // Create audio instances
+  /**
+   * Initialize background music
+   */
+  initMusic() {
     this.sounds.music = new Audio("audio/background-music.mp3");
     this.sounds.music.loop = true;
     this.sounds.music.volume = 0.2;
+  },
 
-    // Load footstep sequence: walk1..walk4 (will be played sequentially)
+  /**
+   * Initialize walk sound sequence
+   */
+  initWalkSounds() {
     this.sounds.walk = [
       new Audio("audio/walk1.wav"),
       new Audio("audio/walk2.wav"),
@@ -52,44 +60,43 @@ const AudioManager = {
       new Audio("audio/walk4.wav"),
     ];
     this.sounds.walk.forEach((a) => (a.volume = 0.1));
-    this._walkIndex = 0;
+  },
 
-    this.sounds.jump = new Audio("audio/jump.ogg");
-    this.sounds.jump.volume = 0.3;
+  /**
+   * Initialize all sound effects
+   */
+  initSoundEffects() {
+    this.sounds.jump = this.createSound("audio/jump.ogg", 0.3);
+    this.sounds.hurt = this.createSound("audio/hurt.ogg", 0.3);
+    this.sounds.gameOver = this.createSound("audio/game-over.wav", 0.6);
+    this.sounds.win = this.createSound("audio/win.wav", 0.8);
+    this.sounds.splash = this.createSound("audio/splash.wav", 0.1);
+    this.sounds.coin = this.createSound("audio/coin.wav", 0.4);
+    this.sounds.chickenDead = this.createSound("audio/chickens-dead.wav", 0.2);
+    this.sounds.smallChickenDead = this.createSound("audio/little-chickens-dead.wav", 0.2);
+    this.sounds.endbossHit = this.createSound("audio/endboss-hit.mp3", 0.4);
+    this.initSnoringSound();
+  },
 
-    this.sounds.hurt = new Audio("audio/hurt.ogg");
-    this.sounds.hurt.volume = 0.3;
+  /**
+   * Create an audio element with specified volume
+   * @param {string} src - Audio file path
+   * @param {number} volume - Volume level (0-1)
+   * @returns {HTMLAudioElement} Audio element
+   */
+  createSound(src, volume) {
+    let audio = new Audio(src);
+    audio.volume = volume;
+    return audio;
+  },
 
-    this.sounds.gameOver = new Audio("audio/game-over.wav");
-    this.sounds.gameOver.volume = 0.6;
-
-    this.sounds.win = new Audio("audio/win.wav");
-    this.sounds.win.volume = 0.8;
-
-    this.sounds.splash = new Audio("audio/splash.wav");
-    this.sounds.splash.volume = 0.1;
-
+  /**
+   * Initialize snoring sound with loop
+   */
+  initSnoringSound() {
     this.sounds.snoring = new Audio("audio/snore.wav");
     this.sounds.snoring.volume = 0.3;
     this.sounds.snoring.loop = true;
-
-    this.sounds.coin = new Audio("audio/coin.wav");
-    this.sounds.coin.volume = 0.4;
-
-    this.sounds.chickenDead = new Audio("audio/chickens-dead.wav");
-    this.sounds.chickenDead.volume = 0.2;
-
-    this.sounds.smallChickenDead = new Audio("audio/little-chickens-dead.wav");
-    this.sounds.smallChickenDead.volume = 0.2;
-
-    this.sounds.endbossHit = new Audio("audio/endboss-hit.mp3");
-    this.sounds.endbossHit.volume = 0.4;
-
-    // Apply initial mute state
-    this.applyMuteState();
-
-    this.initialized = true;
-    console.log("AudioManager initialized, muted:", this.muted);
   },
 
   /**
@@ -143,20 +150,19 @@ const AudioManager = {
    * Play background music
    */
   playMusic() {
-    if (!this.sounds.music) return;
-    if (this.muted) return;
-
-    // Reset and play with a small delay to ensure audio is ready
+    if (!this.sounds.music || this.muted) return;
     this.sounds.music.pause();
     this.sounds.music.currentTime = 0;
+    setTimeout(() => this.tryPlayMusic(), 50);
+  },
 
-    setTimeout(() => {
-      if (this.sounds.music && !this.muted) {
-        this.sounds.music.play().catch((e) => {
-          console.log("Music autoplay blocked:", e.message);
-        });
-      }
-    }, 50);
+  /**
+   * Attempt to play music with error handling
+   */
+  tryPlayMusic() {
+    if (this.sounds.music && !this.muted) {
+      this.sounds.music.play().catch(() => {});
+    }
   },
 
   /**
@@ -171,39 +177,59 @@ const AudioManager = {
 
   /**
    * Play a sound effect with rate limiting
-   * @param {string} name - Name of the sound (walk, jump, hurt, gameOver, win)
+   * @param {string} name - Name of the sound
    */
   playSfx(name) {
     if (this.muted) return;
-
     const sound = this.sounds[name];
-    if (!sound) return;
+    if (!sound || !this.canPlaySound(name)) return;
+    this.lastPlayTime[name] = Date.now();
+    this.playSound(sound, name);
+  },
 
-    // Rate limiting
+  /**
+   * Check if enough time has passed to play sound again
+   * @param {string} name - Sound name
+   * @returns {boolean} True if can play
+   */
+  canPlaySound(name) {
     const now = Date.now();
     const lastTime = this.lastPlayTime[name] || 0;
-    if (now - lastTime < this.minInterval) return;
+    return now - lastTime >= this.minInterval;
+  },
 
-    this.lastPlayTime[name] = now;
-
-    // If sound is an array (sequence), play next in sequence
+  /**
+   * Play a sound (handles arrays and single sounds)
+   * @param {HTMLAudioElement|Array} sound - Sound to play
+   * @param {string} name - Sound name for logging
+   */
+  playSound(sound, name) {
     if (Array.isArray(sound)) {
-      const idx = this._walkIndex % sound.length;
-      const sfx = sound[idx];
-      try {
-        sfx.currentTime = 0;
-        sfx.play();
-      } catch (e) {
-        console.log(`SFX ${name}[${idx}] play failed:`, e.message);
-      }
-      this._walkIndex = (this._walkIndex + 1) % sound.length;
+      this.playSequenceSound(sound);
     } else {
-      // Single Audio instance
-      sound.currentTime = 0;
-      sound.play().catch((e) => {
-        console.log(`SFX ${name} play failed:`, e.message);
-      });
+      this.playSingleSound(sound);
     }
+  },
+
+  /**
+   * Play next sound in a sequence
+   * @param {Array} sounds - Array of audio elements
+   */
+  playSequenceSound(sounds) {
+    const idx = this._walkIndex % sounds.length;
+    const sfx = sounds[idx];
+    sfx.currentTime = 0;
+    sfx.play().catch(() => {});
+    this._walkIndex = (this._walkIndex + 1) % sounds.length;
+  },
+
+  /**
+   * Play a single sound
+   * @param {HTMLAudioElement} sound - Audio element
+   */
+  playSingleSound(sound) {
+    sound.currentTime = 0;
+    sound.play().catch(() => {});
   },
 
   /**
@@ -212,35 +238,40 @@ const AudioManager = {
   stopAll() {
     this.isSnoring = false;
     Object.values(this.sounds).forEach((sound) => {
-      if (Array.isArray(sound)) {
-        sound.forEach((s) => {
-          s.pause();
-          s.currentTime = 0;
-        });
-      } else if (sound) {
-        sound.pause();
-        sound.currentTime = 0;
-      }
+      this.stopSound(sound);
     });
   },
 
-  // Track snoring state
-  isSnoring: false,
+  /**
+   * Stop a single sound or array of sounds
+   * @param {HTMLAudioElement|Array} sound - Sound to stop
+   */
+  stopSound(sound) {
+    if (Array.isArray(sound)) {
+      sound.forEach((s) => this.resetAudio(s));
+    } else if (sound) {
+      this.resetAudio(sound);
+    }
+  },
 
   /**
-   * Start playing snoring sound (looped)
+   * Reset an audio element to initial state
+   * @param {HTMLAudioElement} audio - Audio element
+   */
+  resetAudio(audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  },
+
+  /**
+   * Start playing snoring sound
    */
   startSnoring() {
-    if (this.muted) return;
-    if (this.isSnoring) return; // Already snoring
-
+    if (this.muted || this.isSnoring) return;
     if (this.sounds.snoring) {
       this.isSnoring = true;
       this.sounds.snoring.currentTime = 0;
-      this.sounds.snoring.play().catch((e) => {
-        console.log("Snoring play failed:", e.message);
-        this.isSnoring = false;
-      });
+      this.sounds.snoring.play().catch(() => (this.isSnoring = false));
     }
   },
 
@@ -257,15 +288,14 @@ const AudioManager = {
 
   /**
    * Check if audio manager is muted
-   * @returns {boolean}
+   * @returns {boolean} True if muted
    */
   isMuted() {
     return this.muted;
   },
 
   /**
-   * Reset audio manager to default state (for game restart)
-   * Does not read from localStorage - always starts unmuted
+   * Reset audio manager to default state
    */
   reset() {
     this.stopAll();
@@ -277,5 +307,4 @@ const AudioManager = {
   },
 };
 
-// Expose to global scope
 window.AudioManager = AudioManager;

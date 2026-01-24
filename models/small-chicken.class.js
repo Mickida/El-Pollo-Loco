@@ -7,7 +7,6 @@ class SmallChicken extends MoveableObject {
   height = 50;
   width = 50;
 
-  // Hitbox offsets for realistic collision
   hitboxOffsetTop = 3;
   hitboxOffsetBottom = 3;
   hitboxOffsetLeft = 3;
@@ -70,22 +69,14 @@ class SmallChicken extends MoveableObject {
   }
 
   /**
-   * Called when small chicken is hit by a bottle or jumped on
+   * Called when small chicken is hit
    */
   hit() {
     if (this.isDead) return;
     this.isDead = true;
     this.loadImage(this.IMAGES_DEAD[0]);
-    // Play death sound
-    if (window.AudioManager) {
-      window.AudioManager.playSfx("smallChickenDead");
-    }
-    if (this.moveInterval) {
-      clearInterval(this.moveInterval);
-    }
-    if (this.animateInterval) {
-      clearInterval(this.animateInterval);
-    }
+    playSoundEffect("smallChickenDead");
+    this.stopIntervals();
   }
 
   /**
