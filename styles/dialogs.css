@@ -76,6 +76,26 @@
   border: var(--border-accent);
   box-shadow: var(--shadow-glow-orange-strong);
   animation: dialogSlideIn 0.3s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) var(--color-bg-dark);
+}
+
+.dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+  border-radius: 4px;
+}
+
+.dialog::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-radius: 4px;
+}
+
+.dialog::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-secondary) 0%, var(--color-gold) 100%);
 }
 
 @keyframes dialogSlideIn {

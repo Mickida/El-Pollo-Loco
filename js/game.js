@@ -370,6 +370,13 @@ function showKeybindingsDialog() {
 }
 
 /**
+ * Shows the impressum dialog
+ */
+function showImpressumDialog() {
+  document.getElementById("impressum-dialog").classList.add("active");
+}
+
+/**
  * Hides a dialog by its ID
  * @param {string} dialogId - The ID of the dialog to hide
  */
@@ -428,6 +435,7 @@ function handleEscapeKey(e) {
   if (e.keyCode == 27) {
     hideDialog("info-dialog");
     hideDialog("keybindings-dialog");
+    hideDialog("impressum-dialog");
     if (gamePaused && document.getElementById("pause-dialog").classList.contains("active")) {
       hidePauseMenu();
     }

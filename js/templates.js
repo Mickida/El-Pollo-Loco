@@ -12,6 +12,9 @@ const Templates = {
           <button id="keys-btn" class="btn btn-secondary" onclick="showKeybindingsDialog()"><span>⌨</span> Keybindings</button>
           <button id="fullscreen-btn" class="btn btn-secondary" onclick="toggleFullscreen()"><span>⛶</span> Fullscreen</button>
         </div>
+        <div class="landing-footer">
+          <a href="#" onclick="showImpressumDialog(); return false;">Legal Notice</a>
+        </div>
       </div>
     </div>
   `,
@@ -120,6 +123,36 @@ const Templates = {
       <div class="rotate-content">
         <span class="rotate-icon">🔄</span>
         <p>Please rotate your device to landscape mode</p>
+      </div>
+    </div>
+  `,
+
+  impressumDialog: `
+    <div id="impressum-dialog" class="dialog-overlay" onclick="closeDialogOnBackdrop(event, 'impressum-dialog')">
+      <div class="dialog impressum-dialog">
+        <button class="dialog-close" onclick="hideDialog('impressum-dialog')">✕</button>
+        <h2>Legal Notice</h2>
+        <div class="dialog-content">
+          <h3>Information according to § 5 TMG</h3>
+          <p>
+            Daniel Micklausch<br>
+            An der Waldschule 85<br>
+            26605 Aurich, Germany
+          </p>
+
+          <h3>Contact</h3>
+          <p>Email: d.micklausch@me.com</p>
+
+          <h3>Disclaimer</h3>
+          <h4>Liability for Content</h4>
+          <p>The contents of this site have been created with the utmost care. However, no guarantee can be given for the accuracy, completeness, and timeliness of the content.</p>
+
+          <h4>Liability for Links</h4>
+          <p>This site contains links to external third-party websites over whose content we have no influence. The respective provider is always responsible for the content of the linked pages.</p>
+
+          <h3>Copyright</h3>
+          <p>The content and works created by the site operator on this site are subject to German copyright law. Reproduction, editing, and distribution beyond the limits of copyright law require written consent from the creator.</p>
+        </div>
       </div>
     </div>
   `,

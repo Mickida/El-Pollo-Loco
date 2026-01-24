@@ -56,3 +56,47 @@
   margin-bottom: 40px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
+
+/* ==================== Landing Footer ==================== */
+.landing-footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.landing-footer a {
+  color: var(--color-gold);
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.landing-footer a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* ==================== Impressum Dialog ==================== */
+.impressum-dialog {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.impressum-dialog h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: var(--color-gold);
+}
+
+.impressum-dialog h4 {
+  margin-top: 15px;
+  margin-bottom: 8px;
+  color: var(--color-text-light);
+  font-size: 1rem;
+}
+
+.impressum-dialog p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
