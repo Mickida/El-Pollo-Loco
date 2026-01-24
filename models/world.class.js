@@ -22,6 +22,7 @@ class World {
   animationFrameId = null;
   endboss = null;
   gameOverMusicPlayed = false;
+  lastThrowTime = 0;
 
   /**
    * Create the game world
@@ -278,8 +279,10 @@ class World {
    * Check if player wants to throw a bottle
    */
   checkThrowObjects() {
-    if (this.keyboard.D && this.collectedBottles > 0) {
+    let now = Date.now();
+    if (this.keyboard.D && this.collectedBottles > 0 && now - this.lastThrowTime >= 1000) {
       this.throwBottle();
+      this.lastThrowTime = now;
       this.keyboard.D = false;
     }
   }

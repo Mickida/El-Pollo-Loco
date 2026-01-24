@@ -13,7 +13,7 @@ class Endboss extends MoveableObject {
   hitboxOffsetRight = 20;
 
   state = "idle";
-  speed = 0.5;
+  speed = 1.5;
 
   ALERT_RANGE = 500;
   ATTACK_RANGE = 150;
