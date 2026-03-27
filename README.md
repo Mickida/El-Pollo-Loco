@@ -23,21 +23,25 @@ El Pollo Loco ist ein klassisches 2D-Plattformspiel, in dem du **Pepe** steuerst
 ## 🕹️ Steuerung
 
 ### Desktop
+
 - **Pfeiltasten ←/→**: Bewegen
 - **Leertaste**: Springen
 - **D**: Flasche werfen
 
 ### Mobile
+
 - **Touch-Buttons**: Virtuelle Steuerung auf dem Bildschirm
 
 ## 🚀 Installation & Start
 
 1. **Repository klonen**
+
    ```bash
    git clone https://github.com/DEIN-USERNAME/el-pollo-loco.git
    ```
 
 2. **Projekt öffnen**
+
    ```bash
    cd el-pollo-loco
    ```
@@ -45,10 +49,11 @@ El Pollo Loco ist ein klassisches 2D-Plattformspiel, in dem du **Pepe** steuerst
 3. **Spiel starten**
    - Öffne die `index.html` Datei in einem modernen Webbrowser
    - Oder nutze einen lokalen Webserver:
+
      ```bash
      # Mit Python
      python -m http.server 8000
-     
+
      # Mit Node.js (http-server)
      npx http-server
      ```
@@ -120,6 +125,7 @@ Das Spiel verwendet ein klares OOP-Konzept mit Vererbung:
 ## 🌐 Browser-Kompatibilität
 
 Das Spiel läuft in allen modernen Browsern:
+
 - ✅ Chrome/Edge (empfohlen)
 - ✅ Firefox
 - ✅ Safari
@@ -135,6 +141,7 @@ Das Spiel läuft in allen modernen Browsern:
 ## 🎓 Projekt-Kontext
 
 Dieses Spiel wurde im Rahmen der **Developer Akademie** entwickelt und demonstriert:
+
 - JavaScript OOP-Konzepte
 - Canvas API und Animation
 - Collision Detection
