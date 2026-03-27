@@ -1,162 +1,162 @@
 # 🐔 El Pollo Loco
 
-Ein spannendes Jump-and-Run-Spiel im mexikanischen Stil, entwickelt mit purem JavaScript, HTML5 Canvas und CSS.
+An exciting jump-and-run game in Mexican style, developed with pure JavaScript, HTML5 Canvas and CSS.
 
 ![El Pollo Loco](img/9_intro_outro_screens/start/startscreen_1.png)
 
-## 📖 Über das Spiel
+## 📖 About the Game
 
-El Pollo Loco ist ein klassisches 2D-Plattformspiel, in dem du **Pepe** steuerst, einen mutigen Charakter, der sich durch eine gefährliche Welt voller Hühner kämpft. Dein Ziel ist es, den Endboss zu besiegen, indem du Salsa-Flaschen auf ihn wirfst!
+El Pollo Loco is a classic 2D platformer game where you control **Pepe**, a brave character fighting through a dangerous world full of chickens. Your goal is to defeat the endboss by throwing salsa bottles at him!
 
-## 🎮 Spielfeatures
+## 🎮 Game Features
 
-- **Flüssige Animationen**: Über 100 handgezeichnete Frames für realistische Charakterbewegungen
-- **Gegner-System**: Normale Hühner, kleine Hühner und ein mächtiger Endboss
-- **Sammelobjekte**: Münzen und Salsa-Flaschen zum Einsammeln
-- **Wurfsystem**: Wirf Salsa-Flaschen auf deine Gegner
-- **Statusanzeigen**: Gesundheit, Münzen und Flaschen werden angezeigt
-- **Responsive Design**: Spielbar auf Desktop und mobilen Geräten
-- **Mobile Controls**: Touch-Steuerung für Smartphones und Tablets
-- **Audio-System**: Hintergrundmusik und Soundeffekte
-- **Orientierungserkennung**: Automatische Pause bei Portrait-Modus auf Mobilgeräten
+- **Smooth Animations**: Over 100 hand-drawn frames for realistic character movements
+- **Enemy System**: Normal chickens, small chickens and a mighty endboss
+- **Collectibles**: Coins and salsa bottles to collect
+- **Throwing System**: Throw salsa bottles at your enemies
+- **Status Bars**: Health, coins and bottles displayed
+- **Responsive Design**: Playable on desktop and mobile devices
+- **Mobile Controls**: Touch controls for smartphones and tablets
+- **Audio System**: Background music and sound effects
+- **Orientation Detection**: Automatic pause in portrait mode on mobile devices
 
-## 🕹️ Steuerung
+## 🕹️ Controls
 
 ### Desktop
 
-- **Pfeiltasten ←/→**: Bewegen
-- **Leertaste**: Springen
-- **D**: Flasche werfen
+- **Arrow Keys ←/→**: Move
+- **Spacebar**: Jump
+- **D**: Throw bottle
 
 ### Mobile
 
-- **Touch-Buttons**: Virtuelle Steuerung auf dem Bildschirm
+- **Touch Buttons**: Virtual controls on screen
 
 ## 🚀 Installation & Start
 
-1. **Repository klonen**
+1. **Clone repository**
 
    ```bash
-   git clone https://github.com/DEIN-USERNAME/el-pollo-loco.git
+   git clone https://github.com/YOUR-USERNAME/el-pollo-loco.git
    ```
 
-2. **Projekt öffnen**
+2. **Open project**
 
    ```bash
    cd el-pollo-loco
    ```
 
-3. **Spiel starten**
-   - Öffne die `index.html` Datei in einem modernen Webbrowser
-   - Oder nutze einen lokalen Webserver:
+3. **Start game**
+   - Open the `index.html` file in a modern web browser
+   - Or use a local web server:
 
      ```bash
-     # Mit Python
+     # With Python
      python -m http.server 8000
 
-     # Mit Node.js (http-server)
+     # With Node.js (http-server)
      npx http-server
      ```
 
-4. **Spielen!**
-   - Öffne `http://localhost:8000` in deinem Browser
+4. **Play!**
+   - Open `http://localhost:8000` in your browser
 
-## 🛠️ Technologien
+## 🛠️ Technologies
 
-- **HTML5 Canvas** - Rendering und Grafik
-- **Vanilla JavaScript** (OOP) - Spiellogik und Mechaniken
-- **CSS3** - Styling und Responsive Design
-- **Web Audio API** - Sound und Musik
+- **HTML5 Canvas** - Rendering and graphics
+- **Vanilla JavaScript** (OOP) - Game logic and mechanics
+- **CSS3** - Styling and responsive design
+- **Web Audio API** - Sound and music
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 el-pollo-loco/
-├── index.html              # Haupt-HTML-Datei
-├── style.css              # Haupt-Stylesheet
-├── audio/                 # Soundeffekte und Musik
-├── img/                   # Alle Spielgrafiken
-│   ├── 2_character_pepe/  # Charakter-Sprites
-│   ├── 3_enemies_chicken/ # Gegner-Sprites
-│   ├── 4_enemie_boss_chicken/ # Boss-Sprites
-│   ├── 5_background/      # Hintergrund-Layer
-│   ├── 6_salsa_bottle/    # Flaschen-Sprites
-│   ├── 7_statusbars/      # UI-Elemente
-│   └── 8_coin/            # Münzen
-├── js/                    # JavaScript-Logik
-│   ├── game.js            # Hauptspiel-Controller
-│   ├── audio-manager.js   # Audio-Verwaltung
-│   ├── ui.js              # UI-Management
-│   └── mobile-controls.js # Touch-Steuerung
-├── models/                # Spiel-Klassen (OOP)
-│   ├── character.class.js # Spieler-Charakter
-│   ├── chicken.class.js   # Hühner-Gegner
-│   ├── endboss.class.js   # Boss-Gegner
-│   ├── world.class.js     # Spielwelt
-│   └── ...                # Weitere Klassen
-├── levels/                # Level-Konfigurationen
-│   └── level1.js          # Erstes Level
-└── styles/                # Zusätzliche Stylesheets
-    ├── game.css           # Spiel-Styles
+├── index.html              # Main HTML file
+├── style.css              # Main stylesheet
+├── audio/                 # Sound effects and music
+├── img/                   # All game graphics
+│   ├── 2_character_pepe/  # Character sprites
+│   ├── 3_enemies_chicken/ # Enemy sprites
+│   ├── 4_enemie_boss_chicken/ # Boss sprites
+│   ├── 5_background/      # Background layers
+│   ├── 6_salsa_bottle/    # Bottle sprites
+│   ├── 7_statusbars/      # UI elements
+│   └── 8_coin/            # Coins
+├── js/                    # JavaScript logic
+│   ├── game.js            # Main game controller
+│   ├── audio-manager.js   # Audio management
+│   ├── ui.js              # UI management
+│   └── mobile-controls.js # Touch controls
+├── models/                # Game classes (OOP)
+│   ├── character.class.js # Player character
+│   ├── chicken.class.js   # Chicken enemies
+│   ├── endboss.class.js   # Boss enemy
+│   ├── world.class.js     # Game world
+│   └── ...                # Additional classes
+├── levels/                # Level configurations
+│   └── level1.js          # First level
+└── styles/                # Additional stylesheets
+    ├── game.css           # Game styles
     ├── mobile-controls.css # Mobile UI
-    └── responsive.css     # Responsive Design
+    └── responsive.css     # Responsive design
 ```
 
-## 🎯 Spielziel
+## 🎯 Game Objective
 
-1. Sammle **Münzen** und **Salsa-Flaschen**
-2. Besiege die **Hühner** durch darauf springen
-3. Finde den **Endboss**
-4. Wirf **Salsa-Flaschen** auf den Endboss, um ihn zu besiegen
-5. Achte auf deine **Gesundheit** - weiche Gegnern aus oder eliminiere sie!
+1. Collect **coins** and **salsa bottles**
+2. Defeat the **chickens** by jumping on them
+3. Find the **endboss**
+4. Throw **salsa bottles** at the endboss to defeat him
+5. Watch your **health** - avoid enemies or eliminate them!
 
-## 🎨 Objektoriertiertes Design
+## 🎨 Object-Oriented Design
 
-Das Spiel verwendet ein klares OOP-Konzept mit Vererbung:
+The game uses a clear OOP concept with inheritance:
 
-- `DrawableObject` - Basisklasse für alle zeichenbaren Objekte
-- `MoveableObject` - Erweitert DrawableObject mit Bewegung, Kollision und Gravitation
-- `Character` - Der spielbare Charakter (Pepe)
-- `Chicken` / `SmallChicken` / `Endboss` - Verschiedene Gegnertypen
-- `ThrowableObject` - Werfbare Salsa-Flaschen
-- `World` - Verwaltet die Spielwelt und Kollisionen
-- `Level` - Level-Struktur mit Gegnern und Objekten
+- `DrawableObject` - Base class for all drawable objects
+- `MoveableObject` - Extends DrawableObject with movement, collision and gravity
+- `Character` - The playable character (Pepe)
+- `Chicken` / `SmallChicken` / `Endboss` - Different enemy types
+- `ThrowableObject` - Throwable salsa bottles
+- `World` - Manages the game world and collisions
+- `Level` - Level structure with enemies and objects
 
-## 🌐 Browser-Kompatibilität
+## 🌐 Browser Compatibility
 
-Das Spiel läuft in allen modernen Browsern:
+The game runs in all modern browsers:
 
-- ✅ Chrome/Edge (empfohlen)
+- ✅ Chrome/Edge (recommended)
 - ✅ Firefox
 - ✅ Safari
 - ✅ Opera
 
-## 📱 Mobile Unterstützung
+## 📱 Mobile Support
 
-- Optimiert für Touch-Geräte
-- Virtuelle Steuerungsbuttons
-- Automatische Orientierungserkennung
-- Responsive Canvas-Skalierung
+- Optimized for touch devices
+- Virtual control buttons
+- Automatic orientation detection
+- Responsive canvas scaling
 
-## 🎓 Projekt-Kontext
+## 🎓 Project Context
 
-Dieses Spiel wurde im Rahmen der **Developer Akademie** entwickelt und demonstriert:
+This game was developed as part of the **Developer Akademie** and demonstrates:
 
-- JavaScript OOP-Konzepte
-- Canvas API und Animation
-- Collision Detection
-- Game Loop und Performance
-- Responsive Web Design
-- Audio-Integration
+- JavaScript OOP concepts
+- Canvas API and animation
+- Collision detection
+- Game loop and performance
+- Responsive web design
+- Audio integration
 
-## 📝 Lizenz
+## 📝 License
 
-Dieses Projekt wurde zu Bildungszwecken erstellt. Die Grafiken und Assets sind Teil des Kursmaterials der Developer Akademie.
+This project was created for educational purposes. The graphics and assets are part of the Developer Akademie course material.
 
-## 👤 Autor
+## 👤 Author
 
-Entwickelt von **Daniel** im Rahmen der Developer Akademie Ausbildung.
+Developed by **Daniel** as part of the Developer Akademie training.
 
 ---
 
-**Viel Spaß beim Spielen! 🎮🐔**
+**Have fun playing! 🎮🐔**
